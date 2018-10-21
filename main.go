@@ -17,6 +17,10 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return controller.GetConfigurationController(request)
 	}
 
+	if request.Resource == "/configuration" && request.HTTPMethod == "PUT" {
+		return controller.PutConfigurationController(request)
+	}
+
 	// Default reflector for debugging
 	path, _ := url.PathUnescape(request.Path)
 

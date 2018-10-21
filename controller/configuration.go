@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"
@@ -45,6 +46,51 @@ func GetConfigurationController(request events.APIGatewayProxyRequest) (events.A
 	}
 
 	body, _ := json.Marshal(obj)
+
+	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
+}
+
+func PutConfigurationController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String("eu-central-1")},
+	)
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	config := types.TowerConfiguration{}
+	err = json.Unmarshal([]byte(request.Body), &config)
+	if err != nil {
+		log.Println(err)
+	}
+
+	// Create DynamoDB client
+	svc := dynamodb.New(sess)
+
+	input := &dynamodb.UpdateItemInput{
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":logLevel": {
+				N: aws.String(strconv.Itoa(config.LogLevel)),
+			},
+		},
+		TableName: aws.String("auto-staging-tower"),
+		Key: map[string]*dynamodb.AttributeValue{
+			"towerid": {
+				S: aws.String(request.RequestContext.Stage),
+			},
+		},
+		ReturnValues:     aws.String("UPDATED_NEW"),
+		UpdateExpression: aws.String("SET logLevel = :logLevel"),
+	}
+
+	_, err = svc.UpdateItem(input)
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	body, _ := json.Marshal(config)
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
