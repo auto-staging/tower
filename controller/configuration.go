@@ -27,9 +27,9 @@ func GetConfigurationController(request events.APIGatewayProxyRequest) (events.A
 	svc := dynamodb.New(sess)
 
 	result, err := svc.GetItem(&dynamodb.GetItemInput{
-		TableName: aws.String("auto-staging-tower"),
+		TableName: aws.String("auto-staging-tower-conf"),
 		Key: map[string]*dynamodb.AttributeValue{
-			"towerid": {
+			"towerStage": {
 				S: aws.String(request.RequestContext.Stage),
 			},
 		},
@@ -74,9 +74,9 @@ func PutConfigurationController(request events.APIGatewayProxyRequest) (events.A
 				N: aws.String(strconv.Itoa(config.LogLevel)),
 			},
 		},
-		TableName: aws.String("auto-staging-tower"),
+		TableName: aws.String("auto-staging-tower-conf"),
 		Key: map[string]*dynamodb.AttributeValue{
-			"towerid": {
+			"towerStage": {
 				S: aws.String(request.RequestContext.Stage),
 			},
 		},
