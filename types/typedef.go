@@ -6,6 +6,12 @@ type TowerConfiguration struct {
 	LogLevel int `json:"logLevel"`
 }
 
+type Repository struct {
+	Repository string   `json:"repository"`
+	Webhook    bool     `json:"webhook"`
+	Filters    []string `json:"filters"`
+}
+
 type Reflector struct {
 	Method     string
 	Resource   string

@@ -21,6 +21,14 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return controller.PutConfigurationController(request)
 	}
 
+	if request.Resource == "/repositories" && request.HTTPMethod == "GET" {
+		return controller.GetAllRepositoriesController(request)
+	}
+
+	if request.Resource == "/repositories" && request.HTTPMethod == "POST" {
+		return controller.AddRepositoryController(request)
+	}
+
 	// Default reflector for debugging
 	path, _ := url.PathUnescape(request.Path)
 
