@@ -6,10 +6,6 @@ import (
 	"log"
 
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"gitlab.com/janritter/auto-staging-tower/model"
 	"gitlab.com/janritter/auto-staging-tower/types"
 )
@@ -28,32 +24,8 @@ func GetAllRepositoriesController(request events.APIGatewayProxyRequest) (events
 }
 
 func GetSingleRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String("eu-central-1")},
-	)
-
-	if err != nil {
-		log.Println(err)
-	}
-
-	// Create DynamoDB client
-	svc := dynamodb.New(sess)
-
-	result, err := svc.GetItem(&dynamodb.GetItemInput{
-		TableName: aws.String("auto-staging-tower-repositories"),
-		Key: map[string]*dynamodb.AttributeValue{
-			"repository": {
-				S: aws.String(request.PathParameters["name"]),
-			},
-		},
-	})
-
-	if err != nil {
-		fmt.Printf("failed to make Query API call, %v", err)
-	}
-
 	obj := types.Repository{}
-	err = dynamodbattribute.UnmarshalMap(result.Item, &obj)
+	err := model.GetSingleRepository(&obj, request.PathParameters["name"])
 	if err != nil {
 		fmt.Printf("failed to unmarshal Query result items, %v", err)
 	}
@@ -68,35 +40,13 @@ func GetSingleRepositoryController(request events.APIGatewayProxyRequest) (event
 }
 
 func AddRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String("eu-central-1")},
-	)
-
-	if err != nil {
-		log.Println(err)
-	}
-
 	repo := types.Repository{}
-	err = json.Unmarshal([]byte(request.Body), &repo)
+	err := json.Unmarshal([]byte(request.Body), &repo)
 	if err != nil {
 		log.Println(err)
 	}
 
-	// Create DynamoDB client
-	svc := dynamodb.New(sess)
-
-	av, err := dynamodbattribute.MarshalMap(repo)
-
-	input := &dynamodb.PutItemInput{
-		TableName: aws.String("auto-staging-tower-repositories"),
-		Item:      av,
-	}
-
-	_, err = svc.PutItem(input)
-
-	if err != nil {
-		fmt.Println(err.Error())
-	}
+	err = model.AddRepository(repo)
 
 	body, _ := json.Marshal(repo)
 
