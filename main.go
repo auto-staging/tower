@@ -29,6 +29,10 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return controller.AddRepositoryController(request)
 	}
 
+	if request.Resource == "/repositories/{name}" && request.HTTPMethod == "GET" {
+		return controller.GetSingleRepositoryController(request)
+	}
+
 	// Default reflector for debugging
 	path, _ := url.PathUnescape(request.Path)
 

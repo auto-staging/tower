@@ -10,10 +10,24 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"gitlab.com/janritter/auto-staging-tower/model"
 	"gitlab.com/janritter/auto-staging-tower/types"
 )
 
 func GetAllRepositoriesController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+	obj := []types.Repository{}
+	err := model.GetAllRepositories(&obj)
+	if err != nil {
+		fmt.Printf("failed to unmarshal Query result items, %v", err)
+	}
+
+	body, _ := json.Marshal(obj)
+
+	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
+}
+
+func GetSingleRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String("eu-central-1")},
 	)
@@ -25,18 +39,27 @@ func GetAllRepositoriesController(request events.APIGatewayProxyRequest) (events
 	// Create DynamoDB client
 	svc := dynamodb.New(sess)
 
-	result, err := svc.Scan(&dynamodb.ScanInput{
+	result, err := svc.GetItem(&dynamodb.GetItemInput{
 		TableName: aws.String("auto-staging-tower-repositories"),
+		Key: map[string]*dynamodb.AttributeValue{
+			"repository": {
+				S: aws.String(request.PathParameters["name"]),
+			},
+		},
 	})
 
 	if err != nil {
 		fmt.Printf("failed to make Query API call, %v", err)
 	}
 
-	obj := []types.Repository{}
-	err = dynamodbattribute.UnmarshalListOfMaps(result.Items, &obj)
+	obj := types.Repository{}
+	err = dynamodbattribute.UnmarshalMap(result.Item, &obj)
 	if err != nil {
 		fmt.Printf("failed to unmarshal Query result items, %v", err)
+	}
+
+	if obj.Repository == "" {
+		return events.APIGatewayProxyResponse{Body: "{}", StatusCode: 404}, nil
 	}
 
 	body, _ := json.Marshal(obj)
@@ -73,10 +96,9 @@ func AddRepositoryController(request events.APIGatewayProxyRequest) (events.APIG
 
 	if err != nil {
 		fmt.Println(err.Error())
-		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 400}, nil
 	}
 
 	body, _ := json.Marshal(repo)
 
-	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
+	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 201}, nil
 }
