@@ -53,6 +53,24 @@ func GetSingleRepositoryController(request events.APIGatewayProxyRequest) (event
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
 
+func PutSingleRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	repository := types.Repository{}
+	err := json.Unmarshal([]byte(request.Body), &repository)
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = model.UpdateSingleRepository(&repository, request.PathParameters["name"])
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	body, _ := json.Marshal(repository)
+
+	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
+}
+
 func DeleteSingleRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	obj := types.Repository{}

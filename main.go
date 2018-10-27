@@ -33,6 +33,10 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return controller.GetSingleRepositoryController(request)
 	}
 
+	if request.Resource == "/repositories/{name}" && request.HTTPMethod == "PUT" {
+		return controller.PutSingleRepositoryController(request)
+	}
+
 	if request.Resource == "/repositories/{name}" && request.HTTPMethod == "DELETE" {
 		return controller.DeleteSingleRepositoryController(request)
 	}
