@@ -29,7 +29,7 @@ func GetConfiguration(configuration *types.TowerConfiguration, stage string) err
 	return dynamodbattribute.UnmarshalMap(result.Item, configuration)
 }
 
-func UpdateConfiguration(configuration types.TowerConfiguration, stage string) error {
+func UpdateConfiguration(configuration *types.TowerConfiguration, stage string) error {
 	svc := getDynamoDbClient()
 
 	input := &dynamodb.UpdateItemInput{
@@ -48,7 +48,8 @@ func UpdateConfiguration(configuration types.TowerConfiguration, stage string) e
 		UpdateExpression: aws.String("SET logLevel = :logLevel"),
 	}
 
-	_, err := svc.UpdateItem(input)
+	result, err := svc.UpdateItem(input)
+	dynamodbattribute.UnmarshalMap(result.Attributes, configuration)
 
 	return err
 }

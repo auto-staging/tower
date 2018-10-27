@@ -29,7 +29,7 @@ func PutConfigurationController(request events.APIGatewayProxyRequest) (events.A
 		log.Println(err)
 	}
 
-	err = model.UpdateConfiguration(config, request.RequestContext.Stage)
+	err = model.UpdateConfiguration(&config, request.RequestContext.Stage)
 
 	if err != nil {
 		fmt.Println(err.Error())
