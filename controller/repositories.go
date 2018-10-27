@@ -23,6 +23,20 @@ func GetAllRepositoriesController(request events.APIGatewayProxyRequest) (events
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
 
+func AddRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	repo := types.Repository{}
+	err := json.Unmarshal([]byte(request.Body), &repo)
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = model.AddRepository(repo)
+
+	body, _ := json.Marshal(repo)
+
+	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 201}, nil
+}
+
 func GetSingleRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	obj := types.Repository{}
 	err := model.GetSingleRepository(&obj, request.PathParameters["name"])
@@ -37,18 +51,4 @@ func GetSingleRepositoryController(request events.APIGatewayProxyRequest) (event
 	body, _ := json.Marshal(obj)
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
-}
-
-func AddRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	repo := types.Repository{}
-	err := json.Unmarshal([]byte(request.Body), &repo)
-	if err != nil {
-		log.Println(err)
-	}
-
-	err = model.AddRepository(repo)
-
-	body, _ := json.Marshal(repo)
-
-	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 201}, nil
 }
