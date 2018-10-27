@@ -52,3 +52,17 @@ func GetSingleRepositoryController(request events.APIGatewayProxyRequest) (event
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
+
+func DeleteSingleRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+	obj := types.Repository{}
+	err := model.DeleteSingleRepository(&obj, request.PathParameters["name"])
+	if err != nil {
+		fmt.Printf(err.Error())
+	}
+	if obj.Repository == "" {
+		return events.APIGatewayProxyResponse{Body: "{}", StatusCode: 404}, nil
+	}
+
+	return events.APIGatewayProxyResponse{Body: "", StatusCode: 204}, nil
+}

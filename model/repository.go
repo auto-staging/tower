@@ -56,3 +56,21 @@ func AddRepository(repository types.Repository) error {
 
 	return err
 }
+
+func DeleteSingleRepository(repository *types.Repository, name string) error {
+	svc := getDynamoDbClient()
+
+	result, err := svc.DeleteItem(&dynamodb.DeleteItemInput{
+		TableName: aws.String("auto-staging-tower-repositories"),
+		Key: map[string]*dynamodb.AttributeValue{
+			"repository": {
+				S: aws.String(name),
+			},
+		},
+		ReturnValues: aws.String("ALL_OLD"),
+	})
+
+	dynamodbattribute.UnmarshalMap(result.Attributes, repository)
+
+	return err
+}
