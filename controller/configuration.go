@@ -14,7 +14,7 @@ func GetConfigurationController(request events.APIGatewayProxyRequest) (events.A
 	obj := types.TowerConfiguration{}
 	err := model.GetConfiguration(&obj, request.RequestContext.Stage)
 	if err != nil {
-		fmt.Printf("failed to unmarshal Query result items, %v", err)
+		return types.InternalServerErrorResponse, nil
 	}
 
 	body, _ := json.Marshal(obj)

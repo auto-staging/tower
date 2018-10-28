@@ -1,12 +1,12 @@
 package model
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"gitlab.com/janritter/auto-staging-tower/config"
 	"gitlab.com/janritter/auto-staging-tower/types"
 )
 
@@ -23,10 +23,17 @@ func GetConfiguration(configuration *types.TowerConfiguration, stage string) err
 	})
 
 	if err != nil {
-		fmt.Printf("failed to make Query API call, %v", err)
+		config.Logger.Log(err, map[string]string{"module": "model/GetConfiguration", "operation": "db/execution"}, 0)
+		return err
 	}
 
-	return dynamodbattribute.UnmarshalMap(result.Item, configuration)
+	err = dynamodbattribute.UnmarshalMap(result.Item, configuration)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/GetConfiguration", "operation": "db/unmarshal"}, 1)
+		return err
+	}
+
+	return nil
 }
 
 func UpdateConfiguration(configuration *types.TowerConfiguration, stage string) error {
@@ -48,8 +55,19 @@ func UpdateConfiguration(configuration *types.TowerConfiguration, stage string) 
 		UpdateExpression: aws.String("SET logLevel = :logLevel"),
 	}
 
+	config.UpdateLambdaConfiguration(*configuration)
+
 	result, err := svc.UpdateItem(input)
-	dynamodbattribute.UnmarshalMap(result.Attributes, configuration)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/UpdateConfiguration", "operation": "db/execution"}, 0)
+		return err
+	}
+
+	err = dynamodbattribute.UnmarshalMap(result.Attributes, configuration)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/UpdateConfiguration", "operation": "db/unmarshal"}, 1)
+		return err
+	}
 
 	return err
 }
