@@ -1,6 +1,10 @@
 package types
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"github.com/aws/aws-lambda-go/events"
+)
 
 type TowerConfiguration struct {
 	LogLevel int `json:"logLevel"`
@@ -19,4 +23,9 @@ type Reflector struct {
 	PathParams map[string]string
 	Stage      string
 	Body       map[string]*json.RawMessage
+}
+
+var InternalServerErrorResponse = events.APIGatewayProxyResponse{
+	Body:       "{\"message\": \"Internal server error\"}",
+	StatusCode: 500,
 }
