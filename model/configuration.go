@@ -55,6 +55,8 @@ func UpdateConfiguration(configuration *types.TowerConfiguration, stage string) 
 		UpdateExpression: aws.String("SET logLevel = :logLevel"),
 	}
 
+	config.UpdateLambdaConfiguration(*configuration)
+
 	result, err := svc.UpdateItem(input)
 	if err != nil {
 		config.Logger.Log(err, map[string]string{"module": "model/UpdateConfiguration", "operation": "db/execution"}, 0)

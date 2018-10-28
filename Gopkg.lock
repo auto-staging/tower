@@ -43,13 +43,21 @@
     "private/protocol/query",
     "private/protocol/query/queryutil",
     "private/protocol/rest",
+    "private/protocol/restjson",
     "private/protocol/xml/xmlutil",
     "service/dynamodb",
     "service/dynamodb/dynamodbattribute",
+    "service/lambda",
     "service/sts"
   ]
   revision = "c0037b52736b07cea4e0cb6521f7995adef833bc"
   version = "v1.15.59"
+
+[[projects]]
+  name = "github.com/janritter/go-lightning-log"
+  packages = ["."]
+  revision = "57a046318ccdf94c5e82a6eebf89d87079011493"
+  version = "1.1.0"
 
 [[projects]]
   name = "github.com/jmespath/go-jmespath"
@@ -59,6 +67,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c1509ed4546d0bae09513f48d6f70fa950d01b79c83aa470bc0287f32a5de7b2"
+  inputs-digest = "a6658330dcbf2c4eedd456b7d62b8db136b98a594031cbba6f44f6c8640ec190"
   solver-name = "gps-cdcl"
   solver-version = 1
