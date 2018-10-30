@@ -12,7 +12,7 @@ import (
 
 func GetConfigurationController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	obj := types.TowerConfiguration{}
-	err := model.GetConfiguration(&obj, request.RequestContext.Stage)
+	err := model.GetConfiguration(&obj)
 	if err != nil {
 		return types.InternalServerErrorResponse, nil
 	}
@@ -29,7 +29,7 @@ func PutConfigurationController(request events.APIGatewayProxyRequest) (events.A
 		log.Println(err)
 	}
 
-	err = model.UpdateConfiguration(&config, request.RequestContext.Stage)
+	err = model.UpdateConfiguration(&config)
 
 	if err != nil {
 		fmt.Println(err.Error())
