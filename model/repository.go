@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"gitlab.com/janritter/auto-staging-tower/config"
 	"gitlab.com/janritter/auto-staging-tower/types"
 )
 
@@ -60,51 +61,49 @@ func AddRepository(repository types.Repository) error {
 func UpdateSingleRepository(repository *types.Repository, name string) error {
 	svc := getDynamoDbClient()
 
-	attributeUpdates := map[string]*dynamodb.AttributeValueUpdate{}
+	updateExpression := aws.String("")
 
-	fmt.Println(repository)
+	expressionAttributeValues := map[string]*dynamodb.AttributeValue{}
 
 	if repository.Filters == nil {
-		attributeUpdates = map[string]*dynamodb.AttributeValueUpdate{
-			"webhook": {
-				Action: aws.String("PUT"),
-				Value: &dynamodb.AttributeValue{
-					BOOL: aws.Bool(repository.Webhook),
-				},
-			},
-			"filters": {
-				Action: aws.String("DELETE"),
+		expressionAttributeValues = map[string]*dynamodb.AttributeValue{
+			":webhook": &dynamodb.AttributeValue{
+				BOOL: aws.Bool(repository.Webhook),
 			},
 		}
+
+		updateExpression = aws.String("SET webhook = :webhook REMOVE filters")
 	} else {
-		attributeUpdates = map[string]*dynamodb.AttributeValueUpdate{
-			"webhook": {
-				Action: aws.String("PUT"),
-				Value: &dynamodb.AttributeValue{
-					BOOL: aws.Bool(repository.Webhook),
-				},
+
+		expressionAttributeValues = map[string]*dynamodb.AttributeValue{
+			":webhook": &dynamodb.AttributeValue{
+				BOOL: aws.Bool(repository.Webhook),
 			},
-			"filters": {
-				Action: aws.String("PUT"),
-				Value: &dynamodb.AttributeValue{
-					SS: aws.StringSlice(repository.Filters),
-				},
+			":filters": &dynamodb.AttributeValue{
+				SS: aws.StringSlice(repository.Filters),
 			},
 		}
+
+		updateExpression = aws.String("SET webhook = :webhook, filters = :filters")
 	}
 
 	input := &dynamodb.UpdateItemInput{
-		AttributeUpdates: attributeUpdates,
-		TableName:        aws.String("auto-staging-tower-repositories"),
+		TableName: aws.String("auto-staging-tower-repositories"),
 		Key: map[string]*dynamodb.AttributeValue{
 			"repository": {
 				S: aws.String(name),
 			},
 		},
-		ReturnValues: aws.String("UPDATED_NEW"),
+		ExpressionAttributeValues: expressionAttributeValues,
+		UpdateExpression:          updateExpression,
+		ConditionExpression:       aws.String("attribute_exists(repository)"),
+		ReturnValues:              aws.String("ALL_NEW"),
 	}
 
 	result, err := svc.UpdateItem(input)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/UpdateSingleRepository", "operation": "dynamodb/exec"}, 0)
+	}
 	dynamodbattribute.UnmarshalMap(result.Attributes, repository)
 
 	return err

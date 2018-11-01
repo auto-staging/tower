@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"gitlab.com/janritter/auto-staging-tower/model"
@@ -63,11 +64,13 @@ func PutSingleRepositoryController(request events.APIGatewayProxyRequest) (event
 	err = model.UpdateSingleRepository(&repository, request.PathParameters["name"])
 
 	if err != nil {
-		fmt.Println(err.Error())
+		if strings.Contains(err.Error(), "ConditionalCheckFailedException") {
+			return events.APIGatewayProxyResponse{Body: "{}", StatusCode: 404}, nil
+		}
+		return types.InternalServerErrorResponse, nil
 	}
 
 	body, _ := json.Marshal(repository)
-
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
 
