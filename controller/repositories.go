@@ -33,6 +33,13 @@ func AddRepositoryController(request events.APIGatewayProxyRequest) (events.APIG
 
 	err = model.AddRepository(repo)
 
+	if err != nil {
+		if strings.Contains(err.Error(), "ConditionalCheckFailedException") {
+			return events.APIGatewayProxyResponse{Body: "{ \"message\" : \"unique constraint violation\" }", StatusCode: 400}, nil
+		}
+		return types.InternalServerErrorResponse, nil
+	}
+
 	body, _ := json.Marshal(repo)
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 201}, nil

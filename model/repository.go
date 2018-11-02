@@ -49,8 +49,9 @@ func AddRepository(repository types.Repository) error {
 	av, err := dynamodbattribute.MarshalMap(repository)
 
 	input := &dynamodb.PutItemInput{
-		TableName: aws.String("auto-staging-tower-repositories"),
-		Item:      av,
+		TableName:           aws.String("auto-staging-tower-repositories"),
+		Item:                av,
+		ConditionExpression: aws.String("attribute_not_exists(repository)"),
 	}
 
 	_, err = svc.PutItem(input)
