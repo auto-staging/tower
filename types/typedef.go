@@ -11,9 +11,11 @@ type TowerConfiguration struct {
 }
 
 type Repository struct {
-	Repository string   `json:"repository"`
-	Webhook    bool     `json:"webhook"`
-	Filters    []string `json:"filters"`
+	Repository        string         `json:"repository"`
+	Webhook           bool           `json:"webhook"`
+	Filters           []string       `json:"filters"`
+	ShutdownSchedules []TimeSchedule `json:"schutdownSchedules"`
+	StartupSchedules  []TimeSchedule `json:"startupSchedules"`
 }
 
 type Reflector struct {
@@ -23,6 +25,10 @@ type Reflector struct {
 	PathParams map[string]string
 	Stage      string
 	Body       map[string]*json.RawMessage
+}
+
+type TimeSchedule struct {
+	Cron string `json:"cron"`
 }
 
 var InternalServerErrorResponse = events.APIGatewayProxyResponse{
