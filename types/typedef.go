@@ -42,3 +42,13 @@ var InternalServerErrorResponse = events.APIGatewayProxyResponse{
 	Body:       "{\"message\": \"Internal server error\"}",
 	StatusCode: 500,
 }
+
+var InvalidRequestBodyResponse = events.APIGatewayProxyResponse{
+	Body:       "{\"message\": \"Invalid request body\"}",
+	StatusCode: 400,
+}
+
+var NotFoundErrorResponse = events.APIGatewayProxyResponse{
+	Body:       "{\"message\": \"Not found\"}",
+	StatusCode: 404,
+}
