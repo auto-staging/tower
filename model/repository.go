@@ -62,30 +62,17 @@ func AddRepository(repository types.Repository) error {
 func UpdateSingleRepository(repository *types.Repository, name string) error {
 	svc := getDynamoDbClient()
 
-	updateExpression := aws.String("")
+	updateStruct := types.RepositoryUpdate{
+		Webhook:           repository.Webhook,
+		Filters:           repository.Filters,
+		ShutdownSchedules: repository.ShutdownSchedules,
+		StartupSchedules:  repository.StartupSchedules,
+	}
 
-	expressionAttributeValues := map[string]*dynamodb.AttributeValue{}
+	update, err := dynamodbattribute.MarshalMap(updateStruct)
 
-	if repository.Filters == nil {
-		expressionAttributeValues = map[string]*dynamodb.AttributeValue{
-			":webhook": &dynamodb.AttributeValue{
-				BOOL: aws.Bool(repository.Webhook),
-			},
-		}
-
-		updateExpression = aws.String("SET webhook = :webhook REMOVE filters")
-	} else {
-
-		expressionAttributeValues = map[string]*dynamodb.AttributeValue{
-			":webhook": &dynamodb.AttributeValue{
-				BOOL: aws.Bool(repository.Webhook),
-			},
-			":filters": &dynamodb.AttributeValue{
-				SS: aws.StringSlice(repository.Filters),
-			},
-		}
-
-		updateExpression = aws.String("SET webhook = :webhook, filters = :filters")
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/UpdateSingleRepository", "operation": "dynamodb/marshalUpdateMap"}, 0)
 	}
 
 	input := &dynamodb.UpdateItemInput{
@@ -95,8 +82,8 @@ func UpdateSingleRepository(repository *types.Repository, name string) error {
 				S: aws.String(name),
 			},
 		},
-		ExpressionAttributeValues: expressionAttributeValues,
-		UpdateExpression:          updateExpression,
+		UpdateExpression:          aws.String("SET webhook = :webhook, filters = :filters, shutdownSchedules = :shutdownSchedules, startupSchedules = :startupSchedules"),
+		ExpressionAttributeValues: update,
 		ConditionExpression:       aws.String("attribute_exists(repository)"),
 		ReturnValues:              aws.String("ALL_NEW"),
 	}

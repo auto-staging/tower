@@ -18,6 +18,13 @@ type Repository struct {
 	StartupSchedules  []TimeSchedule `json:"startupSchedules"`
 }
 
+type RepositoryUpdate struct {
+	Webhook           bool           `json:":webhook"`
+	Filters           []string       `json:":filters"`
+	ShutdownSchedules []TimeSchedule `json:":shutdownSchedules"`
+	StartupSchedules  []TimeSchedule `json:":startupSchedules"`
+}
+
 type Reflector struct {
 	Method     string
 	Resource   string
