@@ -14,7 +14,7 @@ type Repository struct {
 	Repository        string         `json:"repository"`
 	Webhook           bool           `json:"webhook"`
 	Filters           []string       `json:"filters"`
-	ShutdownSchedules []TimeSchedule `json:"schutdownSchedules"`
+	ShutdownSchedules []TimeSchedule `json:"shutdownSchedules"`
 	StartupSchedules  []TimeSchedule `json:"startupSchedules"`
 }
 
