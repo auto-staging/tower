@@ -12,7 +12,6 @@ import (
 )
 
 func GetConfiguration(configuration *types.TowerConfiguration) error {
-
 	logLevel, err := strconv.Atoi(os.Getenv("CONFIGURATION_LOG_LEVEL"))
 	if err != nil {
 		config.Logger.Log(err, map[string]string{"module": "model/GetConfiguration"}, 1)

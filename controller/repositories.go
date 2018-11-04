@@ -2,8 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -16,7 +14,7 @@ func GetAllRepositoriesController(request events.APIGatewayProxyRequest) (events
 	obj := []types.Repository{}
 	err := model.GetAllRepositories(&obj)
 	if err != nil {
-		fmt.Printf("failed to unmarshal Query result items, %v", err)
+		return types.InternalServerErrorResponse, nil
 	}
 
 	body, _ := json.Marshal(obj)
@@ -28,14 +26,14 @@ func AddRepositoryController(request events.APIGatewayProxyRequest) (events.APIG
 	repo := types.Repository{}
 	err := json.Unmarshal([]byte(request.Body), &repo)
 	if err != nil {
-		log.Println(err)
+		return types.InvalidRequestBodyResponse, nil
 	}
 
 	err = model.AddRepository(repo)
 
 	if err != nil {
 		if strings.Contains(err.Error(), "ConditionalCheckFailedException") {
-			return events.APIGatewayProxyResponse{Body: "{ \"message\" : \"unique constraint violation\" }", StatusCode: 400}, nil
+			return events.APIGatewayProxyResponse{Body: "{ \"message\" : \"Unique constraint violation\" }", StatusCode: 400}, nil
 		}
 		return types.InternalServerErrorResponse, nil
 	}
@@ -49,11 +47,11 @@ func GetSingleRepositoryController(request events.APIGatewayProxyRequest) (event
 	obj := types.Repository{}
 	err := model.GetSingleRepository(&obj, request.PathParameters["name"])
 	if err != nil {
-		fmt.Printf("failed to unmarshal Query result items, %v", err)
+		return types.InternalServerErrorResponse, nil
 	}
 
 	if obj.Repository == "" {
-		return events.APIGatewayProxyResponse{Body: "{}", StatusCode: 404}, nil
+		return types.NotFoundErrorResponse, nil
 	}
 
 	body, _ := json.Marshal(obj)
@@ -65,14 +63,14 @@ func PutSingleRepositoryController(request events.APIGatewayProxyRequest) (event
 	repository := types.Repository{}
 	err := json.Unmarshal([]byte(request.Body), &repository)
 	if err != nil {
-		log.Println(err)
+		return types.InvalidRequestBodyResponse, nil
 	}
 
 	err = model.UpdateSingleRepository(&repository, request.PathParameters["name"])
 
 	if err != nil {
 		if strings.Contains(err.Error(), "ConditionalCheckFailedException") {
-			return events.APIGatewayProxyResponse{Body: "{}", StatusCode: 404}, nil
+			return types.NotFoundErrorResponse, nil
 		}
 		return types.InternalServerErrorResponse, nil
 	}
@@ -82,14 +80,14 @@ func PutSingleRepositoryController(request events.APIGatewayProxyRequest) (event
 }
 
 func DeleteSingleRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-
 	obj := types.Repository{}
 	err := model.DeleteSingleRepository(&obj, request.PathParameters["name"])
 	if err != nil {
-		fmt.Printf(err.Error())
+		return types.InternalServerErrorResponse, nil
 	}
+
 	if obj.Repository == "" {
-		return events.APIGatewayProxyResponse{Body: "{}", StatusCode: 404}, nil
+		return types.NotFoundErrorResponse, nil
 	}
 
 	return events.APIGatewayProxyResponse{Body: "", StatusCode: 204}, nil

@@ -11,9 +11,18 @@ type TowerConfiguration struct {
 }
 
 type Repository struct {
-	Repository string   `json:"repository"`
-	Webhook    bool     `json:"webhook"`
-	Filters    []string `json:"filters"`
+	Repository        string         `json:"repository"`
+	Webhook           bool           `json:"webhook"`
+	Filters           []string       `json:"filters"`
+	ShutdownSchedules []TimeSchedule `json:"shutdownSchedules"`
+	StartupSchedules  []TimeSchedule `json:"startupSchedules"`
+}
+
+type RepositoryUpdate struct {
+	Webhook           bool           `json:":webhook"`
+	Filters           []string       `json:":filters"`
+	ShutdownSchedules []TimeSchedule `json:":shutdownSchedules"`
+	StartupSchedules  []TimeSchedule `json:":startupSchedules"`
 }
 
 type Reflector struct {
@@ -25,7 +34,21 @@ type Reflector struct {
 	Body       map[string]*json.RawMessage
 }
 
+type TimeSchedule struct {
+	Cron string `json:"cron"`
+}
+
 var InternalServerErrorResponse = events.APIGatewayProxyResponse{
 	Body:       "{\"message\": \"Internal server error\"}",
 	StatusCode: 500,
+}
+
+var InvalidRequestBodyResponse = events.APIGatewayProxyResponse{
+	Body:       "{\"message\": \"Invalid request body\"}",
+	StatusCode: 400,
+}
+
+var NotFoundErrorResponse = events.APIGatewayProxyResponse{
+	Body:       "{\"message\": \"Not found\"}",
+	StatusCode: 404,
 }

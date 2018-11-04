@@ -2,8 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 
 	"github.com/aws/aws-lambda-go/events"
 	"gitlab.com/janritter/auto-staging-tower/model"
@@ -26,13 +24,12 @@ func PutConfigurationController(request events.APIGatewayProxyRequest) (events.A
 	config := types.TowerConfiguration{}
 	err := json.Unmarshal([]byte(request.Body), &config)
 	if err != nil {
-		log.Println(err)
+		return types.InvalidRequestBodyResponse, nil
 	}
 
 	err = model.UpdateConfiguration(&config)
-
 	if err != nil {
-		fmt.Println(err.Error())
+		return types.InternalServerErrorResponse, nil
 	}
 
 	body, _ := json.Marshal(config)
