@@ -72,10 +72,11 @@ func UpdateSingleRepository(repository *types.Repository, name string) error {
 	svc := getDynamoDbClient()
 
 	updateStruct := types.RepositoryUpdate{
-		Webhook:           repository.Webhook,
-		Filters:           repository.Filters,
-		ShutdownSchedules: repository.ShutdownSchedules,
-		StartupSchedules:  repository.StartupSchedules,
+		Webhook:              repository.Webhook,
+		Filters:              repository.Filters,
+		ShutdownSchedules:    repository.ShutdownSchedules,
+		StartupSchedules:     repository.StartupSchedules,
+		EnvironmentVariables: repository.EnvironmentVariables,
 	}
 
 	update, err := dynamodbattribute.MarshalMap(updateStruct)
@@ -92,7 +93,7 @@ func UpdateSingleRepository(repository *types.Repository, name string) error {
 				S: aws.String(name),
 			},
 		},
-		UpdateExpression:          aws.String("SET webhook = :webhook, filters = :filters, shutdownSchedules = :shutdownSchedules, startupSchedules = :startupSchedules"),
+		UpdateExpression:          aws.String("SET webhook = :webhook, filters = :filters, shutdownSchedules = :shutdownSchedules, startupSchedules = :startupSchedules, environmentVariables = :environmentVariables"),
 		ExpressionAttributeValues: update,
 		ConditionExpression:       aws.String("attribute_exists(repository)"),
 		ReturnValues:              aws.String("ALL_NEW"),

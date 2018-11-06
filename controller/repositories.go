@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
+	"gitlab.com/janritter/auto-staging-tower/config"
 	"gitlab.com/janritter/auto-staging-tower/model"
 	"gitlab.com/janritter/auto-staging-tower/types"
 )
@@ -63,6 +64,7 @@ func PutSingleRepositoryController(request events.APIGatewayProxyRequest) (event
 	repository := types.Repository{}
 	err := json.Unmarshal([]byte(request.Body), &repository)
 	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/PutSingleRepositoryController", "operation": "unmarshal"}, 4)
 		return types.InvalidRequestBodyResponse, nil
 	}
 
