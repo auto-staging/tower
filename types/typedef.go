@@ -11,18 +11,20 @@ type TowerConfiguration struct {
 }
 
 type Repository struct {
-	Repository        string         `json:"repository"`
-	Webhook           bool           `json:"webhook"`
-	Filters           []string       `json:"filters"`
-	ShutdownSchedules []TimeSchedule `json:"shutdownSchedules"`
-	StartupSchedules  []TimeSchedule `json:"startupSchedules"`
+	Repository           string            `json:"repository"`
+	Webhook              bool              `json:"webhook"`
+	Filters              []string          `json:"filters"`
+	ShutdownSchedules    []TimeSchedule    `json:"shutdownSchedules"`
+	StartupSchedules     []TimeSchedule    `json:"startupSchedules"`
+	EnvironmentVariables map[string]string `json:"environmentVariables"`
 }
 
 type RepositoryUpdate struct {
-	Webhook           bool           `json:":webhook"`
-	Filters           []string       `json:":filters"`
-	ShutdownSchedules []TimeSchedule `json:":shutdownSchedules"`
-	StartupSchedules  []TimeSchedule `json:":startupSchedules"`
+	Webhook              bool              `json:":webhook"`
+	Filters              []string          `json:":filters"`
+	ShutdownSchedules    []TimeSchedule    `json:":shutdownSchedules"`
+	StartupSchedules     []TimeSchedule    `json:":startupSchedules"`
+	EnvironmentVariables map[string]string `json:":environmentVariables"`
 }
 
 type Reflector struct {
