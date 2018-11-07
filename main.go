@@ -42,6 +42,14 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return controller.DeleteSingleRepositoryController(request)
 	}
 
+	if request.Resource == "/repositories/{name}/environments" && request.HTTPMethod == "GET" {
+		return controller.GetAllEnvironmentsForRepositroyController(request)
+	}
+
+	if request.Resource == "/repositories/{name}/environments" && request.HTTPMethod == "POST" {
+		return controller.AddEnvironmentForRepositroyController(request)
+	}
+
 	// Default reflector for debugging
 	path, _ := url.PathUnescape(request.Path)
 

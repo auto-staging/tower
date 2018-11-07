@@ -27,6 +27,41 @@ type RepositoryUpdate struct {
 	EnvironmentVariables map[string]string `json:":environmentVariables"`
 }
 
+type EnvironmentGeneralConfig struct {
+	ShutdownSchedules    []TimeSchedule    `json:"shutdownSchedules"`
+	StartupSchedules     []TimeSchedule    `json:"startupSchedules"`
+	EnvironmentVariables map[string]string `json:"environmentVariables"`
+}
+
+type EnvironmentGeneralConfigUpdate struct {
+	ShutdownSchedules    []TimeSchedule    `json:":shutdownSchedules"`
+	StartupSchedules     []TimeSchedule    `json:":startupSchedules"`
+	EnvironmentVariables map[string]string `json:":environmentVariables"`
+}
+
+type Environment struct {
+	Repository           string            `json:"repository"`
+	Branch               string            `json:"branch"`
+	CreationDate         string            `json:"creationDate"`
+	State                string            `json:"state"`
+	ShutdownSchedules    []TimeSchedule    `json:"shutdownSchedules"`
+	StartupSchedules     []TimeSchedule    `json:"startupSchedules"`
+	EnvironmentVariables map[string]string `json:"environmentVariables"`
+}
+
+type EnvironmentUpdate struct {
+	ShutdownSchedules    []TimeSchedule    `json:":shutdownSchedules"`
+	StartupSchedules     []TimeSchedule    `json:":startupSchedules"`
+	EnvironmentVariables map[string]string `json:":environmentVariables"`
+}
+
+type EnvironmentPost struct {
+	Branch               string            `json:"branch"`
+	ShutdownSchedules    []TimeSchedule    `json:"shutdownSchedules"`
+	StartupSchedules     []TimeSchedule    `json:"startupSchedules"`
+	EnvironmentVariables map[string]string `json:"environmentVariables"`
+}
+
 type Reflector struct {
 	Method     string
 	Resource   string
