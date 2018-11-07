@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"net/url"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -9,7 +10,7 @@ import (
 	"gitlab.com/janritter/auto-staging-tower/types"
 )
 
-func GetAllEnvironmentsForRepositroyController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func GetAllEnvironmentsForRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	obj := []types.Environment{}
 	err := model.GetAllEnvironmentsForRepository(&obj, request.PathParameters["name"])
 	if err != nil {
@@ -21,14 +22,14 @@ func GetAllEnvironmentsForRepositroyController(request events.APIGatewayProxyReq
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
 
-func AddEnvironmentForRepositroyController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func AddEnvironmentForRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	env := types.EnvironmentPost{}
 	err := json.Unmarshal([]byte(request.Body), &env)
 	if err != nil {
 		return types.InvalidRequestBodyResponse, nil
 	}
 
-	result, err := model.AddEnvironmentForRepositroy(env, request.PathParameters["name"])
+	result, err := model.AddEnvironmentForRepository(env, request.PathParameters["name"])
 
 	if err != nil {
 		if strings.Contains(err.Error(), "ConditionalCheckFailedException") {
@@ -42,21 +43,22 @@ func AddEnvironmentForRepositroyController(request events.APIGatewayProxyRequest
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 201}, nil
 }
 
-// func GetSingleRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-// 	obj := types.Repository{}
-// 	err := model.GetSingleRepository(&obj, request.PathParameters["name"])
-// 	if err != nil {
-// 		return types.InternalServerErrorResponse, nil
-// 	}
+func GetSingleEnvironmentForRepository(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	obj := types.Environment{}
+	branch, _ := url.PathUnescape(request.PathParameters["branch"])
+	err := model.GetSingleEnvironmentForRepository(&obj, request.PathParameters["name"], branch)
+	if err != nil {
+		return types.InternalServerErrorResponse, nil
+	}
 
-// 	if obj.Repository == "" {
-// 		return types.NotFoundErrorResponse, nil
-// 	}
+	if obj.Repository == "" {
+		return types.NotFoundErrorResponse, nil
+	}
 
-// 	body, _ := json.Marshal(obj)
+	body, _ := json.Marshal(obj)
 
-// 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
-// }
+	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
+}
 
 // func PutSingleRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 // 	repository := types.Repository{}

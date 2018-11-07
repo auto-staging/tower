@@ -36,7 +36,32 @@ func GetAllEnvironmentsForRepository(environments *[]types.Environment, name str
 	return nil
 }
 
-func AddEnvironmentForRepositroy(environment types.EnvironmentPost, name string) (types.Environment, error) {
+func GetSingleEnvironmentForRepository(environment *types.Environment, name string, branch string) error {
+	svc := getDynamoDbClient()
+
+	result, err := svc.GetItem(&dynamodb.GetItemInput{
+		TableName: aws.String("auto-staging-environments"),
+		Key: map[string]*dynamodb.AttributeValue{
+			"repository": {
+				S: aws.String(name),
+			},
+			"branch": {
+				S: aws.String(branch),
+			},
+		},
+	})
+
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/GetSingleEnvironmentForRepository", "operation": "dynamodb/exec"}, 0)
+		return err
+	}
+
+	dynamodbattribute.UnmarshalMap(result.Item, environment)
+
+	return nil
+}
+
+func AddEnvironmentForRepository(environment types.EnvironmentPost, name string) (types.Environment, error) {
 	svc := getDynamoDbClient()
 
 	creation := time.Now().UTC()

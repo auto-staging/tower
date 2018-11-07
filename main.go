@@ -43,11 +43,15 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 
 	if request.Resource == "/repositories/{name}/environments" && request.HTTPMethod == "GET" {
-		return controller.GetAllEnvironmentsForRepositroyController(request)
+		return controller.GetAllEnvironmentsForRepositoryController(request)
 	}
 
 	if request.Resource == "/repositories/{name}/environments" && request.HTTPMethod == "POST" {
-		return controller.AddEnvironmentForRepositroyController(request)
+		return controller.AddEnvironmentForRepositoryController(request)
+	}
+
+	if request.Resource == "/repositories/{name}/environments/{branch}" && request.HTTPMethod == "GET" {
+		return controller.GetSingleEnvironmentForRepository(request)
 	}
 
 	// Default reflector for debugging
