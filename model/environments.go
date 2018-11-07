@@ -1,7 +1,6 @@
 package model
 
 import (
-	"log"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -50,7 +49,6 @@ func AddEnvironmentForRepositroy(environment types.EnvironmentPost, name string)
 	}
 
 	av, err := dynamodbattribute.MarshalMap(inputEnvironment)
-	log.Println(av)
 
 	input := &dynamodb.PutItemInput{
 		TableName: aws.String("auto-staging-environments"),
