@@ -12,7 +12,7 @@ func GetAllRepositories(repositories *[]types.Repository) error {
 	svc := getDynamoDbClient()
 
 	result, err := svc.Scan(&dynamodb.ScanInput{
-		TableName: aws.String("auto-staging-tower-repositories"),
+		TableName: aws.String("auto-staging-repositories"),
 	})
 
 	if err != nil {
@@ -29,7 +29,7 @@ func GetSingleRepository(repository *types.Repository, name string) error {
 	svc := getDynamoDbClient()
 
 	result, err := svc.GetItem(&dynamodb.GetItemInput{
-		TableName: aws.String("auto-staging-tower-repositories"),
+		TableName: aws.String("auto-staging-repositories"),
 		Key: map[string]*dynamodb.AttributeValue{
 			"repository": {
 				S: aws.String(name),
@@ -53,7 +53,7 @@ func AddRepository(repository types.Repository) error {
 	av, err := dynamodbattribute.MarshalMap(repository)
 
 	input := &dynamodb.PutItemInput{
-		TableName:           aws.String("auto-staging-tower-repositories"),
+		TableName:           aws.String("auto-staging-repositories"),
 		Item:                av,
 		ConditionExpression: aws.String("attribute_not_exists(repository)"),
 	}
@@ -87,7 +87,7 @@ func UpdateSingleRepository(repository *types.Repository, name string) error {
 	}
 
 	input := &dynamodb.UpdateItemInput{
-		TableName: aws.String("auto-staging-tower-repositories"),
+		TableName: aws.String("auto-staging-repositories"),
 		Key: map[string]*dynamodb.AttributeValue{
 			"repository": {
 				S: aws.String(name),
@@ -114,7 +114,7 @@ func DeleteSingleRepository(repository *types.Repository, name string) error {
 	svc := getDynamoDbClient()
 
 	result, err := svc.DeleteItem(&dynamodb.DeleteItemInput{
-		TableName: aws.String("auto-staging-tower-repositories"),
+		TableName: aws.String("auto-staging-repositories"),
 		Key: map[string]*dynamodb.AttributeValue{
 			"repository": {
 				S: aws.String(name),
