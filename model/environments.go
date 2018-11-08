@@ -76,9 +76,9 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 	av, err := dynamodbattribute.MarshalMap(inputEnvironment)
 
 	input := &dynamodb.PutItemInput{
-		TableName: aws.String("auto-staging-environments"),
-		Item:      av,
-		//ConditionExpression: aws.String("attribute_not_exists(repository) and attribute_not_exists(branch)"), //TODO Fix check
+		TableName:           aws.String("auto-staging-environments"),
+		Item:                av,
+		ConditionExpression: aws.String("attribute_not_exists(repository) AND attribute_not_exists(branch)"),
 	}
 
 	_, err = svc.PutItem(input)
