@@ -55,6 +55,12 @@ type EnvironmentUpdate struct {
 	EnvironmentVariables map[string]string `json:":environmentVariables"`
 }
 
+type EnvironmentPut struct {
+	ShutdownSchedules    []TimeSchedule    `json:"shutdownSchedules"`
+	StartupSchedules     []TimeSchedule    `json:"startupSchedules"`
+	EnvironmentVariables map[string]string `json:"environmentVariables"`
+}
+
 type EnvironmentPost struct {
 	Branch               string            `json:"branch"`
 	ShutdownSchedules    []TimeSchedule    `json:"shutdownSchedules"`

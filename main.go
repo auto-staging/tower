@@ -54,6 +54,10 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return controller.GetSingleEnvironmentForRepository(request)
 	}
 
+	if request.Resource == "/repositories/{name}/environments/{branch}" && request.HTTPMethod == "PUT" {
+		return controller.PutSinglEnvironmentForRepositoryController(request)
+	}
+
 	// Default reflector for debugging
 	path, _ := url.PathUnescape(request.Path)
 

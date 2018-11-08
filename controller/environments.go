@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
+	"gitlab.com/janritter/auto-staging-tower/config"
 	"gitlab.com/janritter/auto-staging-tower/model"
 	"gitlab.com/janritter/auto-staging-tower/types"
 )
@@ -60,26 +61,27 @@ func GetSingleEnvironmentForRepository(request events.APIGatewayProxyRequest) (e
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
 
-// func PutSingleRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-// 	repository := types.Repository{}
-// 	err := json.Unmarshal([]byte(request.Body), &repository)
-// 	if err != nil {
-// 		config.Logger.Log(err, map[string]string{"module": "controller/PutSingleRepositoryController", "operation": "unmarshal"}, 4)
-// 		return types.InvalidRequestBodyResponse, nil
-// 	}
+func PutSinglEnvironmentForRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	environment := types.EnvironmentPut{}
+	branch, _ := url.PathUnescape(request.PathParameters["branch"])
+	err := json.Unmarshal([]byte(request.Body), &environment)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/PutSinglEnvironmentForRepositoryController", "operation": "unmarshal"}, 4)
+		return types.InvalidRequestBodyResponse, nil
+	}
 
-// 	err = model.UpdateSingleRepository(&repository, request.PathParameters["name"])
+	result, err := model.UpdateEnvironment(&environment, request.PathParameters["name"], branch)
 
-// 	if err != nil {
-// 		if strings.Contains(err.Error(), "ConditionalCheckFailedException") {
-// 			return types.NotFoundErrorResponse, nil
-// 		}
-// 		return types.InternalServerErrorResponse, nil
-// 	}
+	if err != nil {
+		if strings.Contains(err.Error(), "ConditionalCheckFailedException") {
+			return types.NotFoundErrorResponse, nil
+		}
+		return types.InternalServerErrorResponse, nil
+	}
 
-// 	body, _ := json.Marshal(repository)
-// 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
-// }
+	body, _ := json.Marshal(result)
+	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
+}
 
 // func DeleteSingleRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 // 	obj := types.Repository{}

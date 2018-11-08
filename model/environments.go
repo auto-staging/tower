@@ -90,3 +90,47 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 
 	return inputEnvironment, nil
 }
+
+func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch string) (types.Environment, error) {
+	svc := getDynamoDbClient()
+
+	updateStruct := types.EnvironmentUpdate{
+		ShutdownSchedules:    environment.ShutdownSchedules,
+		StartupSchedules:     environment.StartupSchedules,
+		EnvironmentVariables: environment.EnvironmentVariables,
+	}
+
+	update, err := dynamodbattribute.MarshalMap(updateStruct)
+
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/UpdateSingleRepository", "operation": "dynamodb/marshalUpdateMap"}, 0)
+		return types.Environment{}, err
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName: aws.String("auto-staging-environments"),
+		Key: map[string]*dynamodb.AttributeValue{
+			"repository": {
+				S: aws.String(name),
+			},
+			"branch": {
+				S: aws.String(branch),
+			},
+		},
+		UpdateExpression:          aws.String("SET shutdownSchedules = :shutdownSchedules, startupSchedules = :startupSchedules, environmentVariables = :environmentVariables"),
+		ExpressionAttributeValues: update,
+		ConditionExpression:       aws.String("attribute_exists(repository) AND attribute_exists(branch)"),
+		ReturnValues:              aws.String("ALL_NEW"),
+	}
+
+	result, err := svc.UpdateItem(input)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/UpdateEnvironment", "operation": "dynamodb/exec"}, 0)
+		return types.Environment{}, err
+	}
+
+	response := types.Environment{}
+	dynamodbattribute.UnmarshalMap(result.Attributes, &response)
+
+	return response, nil
+}
