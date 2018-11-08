@@ -58,6 +58,10 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return controller.PutSinglEnvironmentForRepositoryController(request)
 	}
 
+	if request.Resource == "/repositories/{name}/environments/{branch}" && request.HTTPMethod == "DELETE" {
+		return controller.DeleteSingleEnvironmentController(request)
+	}
+
 	// Default reflector for debugging
 	path, _ := url.PathUnescape(request.Path)
 

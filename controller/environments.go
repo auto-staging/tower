@@ -83,16 +83,17 @@ func PutSinglEnvironmentForRepositoryController(request events.APIGatewayProxyRe
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
 
-// func DeleteSingleRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-// 	obj := types.Repository{}
-// 	err := model.DeleteSingleRepository(&obj, request.PathParameters["name"])
-// 	if err != nil {
-// 		return types.InternalServerErrorResponse, nil
-// 	}
+func DeleteSingleEnvironmentController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	obj := types.Environment{}
+	branch, _ := url.PathUnescape(request.PathParameters["branch"])
+	err := model.DeleteSingleEnvironment(&obj, request.PathParameters["name"], branch)
+	if err != nil {
+		return types.InternalServerErrorResponse, nil
+	}
 
-// 	if obj.Repository == "" {
-// 		return types.NotFoundErrorResponse, nil
-// 	}
+	if obj.Repository == "" {
+		return types.NotFoundErrorResponse, nil
+	}
 
-// 	return events.APIGatewayProxyResponse{Body: "", StatusCode: 204}, nil
-// }
+	return events.APIGatewayProxyResponse{Body: "", StatusCode: 204}, nil
+}

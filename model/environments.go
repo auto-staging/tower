@@ -134,3 +134,29 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 
 	return response, nil
 }
+
+func DeleteSingleEnvironment(environment *types.Environment, name string, branch string) error {
+	svc := getDynamoDbClient()
+
+	result, err := svc.DeleteItem(&dynamodb.DeleteItemInput{
+		TableName: aws.String("auto-staging-environments"),
+		Key: map[string]*dynamodb.AttributeValue{
+			"repository": {
+				S: aws.String(name),
+			},
+			"branch": {
+				S: aws.String(branch),
+			},
+		},
+		ReturnValues: aws.String("ALL_OLD"),
+	})
+
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/DeleteSingleEnvironment", "operation": "dynamodb/exec"}, 0)
+		return err
+	}
+
+	dynamodbattribute.UnmarshalMap(result.Attributes, environment)
+
+	return nil
+}
