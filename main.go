@@ -66,6 +66,10 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return controller.GetAllEnvironmentsStatusInformationController(request)
 	}
 
+	if request.Resource == "/repositories/{name}/environments/{branch}/status" && request.HTTPMethod == "GET" {
+		return controller.GetSingleEnvironmentStatusInformationController(request)
+	}
+
 	// Default reflector for debugging
 	path, _ := url.PathUnescape(request.Path)
 
