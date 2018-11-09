@@ -1,6 +1,8 @@
 package model
 
 import (
+	"errors"
+	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -67,10 +69,35 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 	creation := time.Now().UTC()
 
 	inputEnvironment := types.Environment{
-		Repository:   name,
-		Branch:       environment.Branch,
-		State:        "pending",
-		CreationDate: creation.String(),
+		Repository:           name,
+		Branch:               environment.Branch,
+		State:                "pending",
+		CreationDate:         creation.String(),
+		ShutdownSchedules:    environment.ShutdownSchedules,
+		StartupSchedules:     environment.StartupSchedules,
+		EnvironmentVariables: environment.EnvironmentVariables,
+	}
+
+	// Overwrite unset values with defaults from the parent repository
+	if inputEnvironment.ShutdownSchedules == nil || inputEnvironment.StartupSchedules == nil || inputEnvironment.EnvironmentVariables == nil {
+		config.Logger.Log(errors.New("Overwriting unset variables with global defaults"), map[string]string{"module": "model/AddEnvironmentForRepository", "operation": "overwrite"}, 4)
+		repository := types.Repository{}
+		err := GetSingleRepository(&repository, name)
+		if err != nil {
+			return types.Environment{}, err
+		}
+		if inputEnvironment.ShutdownSchedules == nil {
+			config.Logger.Log(errors.New("Overwriting ShutdownSchedules - Default = "+fmt.Sprint(repository.ShutdownSchedules)), map[string]string{"module": "controller/AddEnvironmentForRepository", "operation": "overwrite/ShutdownSchedules"}, 4)
+			inputEnvironment.ShutdownSchedules = repository.ShutdownSchedules
+		}
+		if inputEnvironment.StartupSchedules == nil {
+			config.Logger.Log(errors.New("Overwriting StartupSchedules - Default = "+fmt.Sprint(repository.StartupSchedules)), map[string]string{"module": "controller/AddEnvironmentForRepository", "operation": "overwrite/StartupSchedules"}, 4)
+			inputEnvironment.StartupSchedules = repository.StartupSchedules
+		}
+		if inputEnvironment.EnvironmentVariables == nil {
+			config.Logger.Log(errors.New("Overwriting EnvironmentVariables - Default = "+fmt.Sprint(repository.EnvironmentVariables)), map[string]string{"module": "controller/AddEnvironmentForRepository", "operation": "overwrite/EnvironmentVariables"}, 4)
+			inputEnvironment.EnvironmentVariables = repository.EnvironmentVariables
+		}
 	}
 
 	av, err := dynamodbattribute.MarshalMap(inputEnvironment)
