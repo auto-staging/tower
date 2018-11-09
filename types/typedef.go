@@ -68,6 +68,12 @@ type EnvironmentPost struct {
 	EnvironmentVariables map[string]string `json:"environmentVariables"`
 }
 
+type EnvironmentStatus struct {
+	Repository string `json:"repository"`
+	Branch     string `json:"branch"`
+	State      string `json:"state"`
+}
+
 type Reflector struct {
 	Method     string
 	Resource   string
