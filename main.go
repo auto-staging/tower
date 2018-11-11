@@ -78,6 +78,14 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return controller.PutGlobalRepositoryConfigController(request)
 	}
 
+	if request.Resource == "/webhooks/github" && request.HTTPMethod == "POST" && request.Headers["X-GitHub-Event"] == "ping" {
+		return controller.GitHubWebhookPingController(request)
+	}
+
+	if request.Resource == "/webhooks/github" && request.HTTPMethod == "POST" && request.Headers["X-GitHub-Event"] == "create" {
+		return controller.GitHubWebhookCreateController(request)
+	}
+
 	// Default reflector for debugging
 	path, _ := url.PathUnescape(request.Path)
 
@@ -98,6 +106,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		PathParams: request.PathParameters,
 		Stage:      request.RequestContext.Stage,
 		Body:       objmap,
+		Headers:    request.Headers,
 	}
 
 	body, _ := json.Marshal(response)

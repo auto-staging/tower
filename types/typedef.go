@@ -81,6 +81,15 @@ type Reflector struct {
 	PathParams map[string]string
 	Stage      string
 	Body       map[string]*json.RawMessage
+	Headers    map[string]string
+}
+
+type GitHubWebhook struct {
+	Ref        string `json:"ref"`
+	RefType    string `json:"ref_type"`
+	Repository struct {
+		Name string `json:"name"`
+	}
 }
 
 type TimeSchedule struct {
