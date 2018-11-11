@@ -54,3 +54,23 @@ func GitHubWebhookCreateController(request events.APIGatewayProxyRequest) (event
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 201}, nil
 }
+
+func GitHubWebhookDeleteController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	webhook := types.GitHubWebhook{}
+	err := json.Unmarshal([]byte(request.Body), &webhook)
+	if err != nil || webhook.RefType != "branch" {
+		return types.InvalidRequestBodyResponse, nil
+	}
+
+	environment := types.Environment{}
+	err = model.DeleteSingleEnvironment(&environment, webhook.Repository.Name, webhook.Ref)
+	if err != nil {
+		return types.InternalServerErrorResponse, nil
+	}
+
+	if environment.Repository == "" {
+		return types.NotFoundErrorResponse, nil
+	}
+
+	return events.APIGatewayProxyResponse{Body: "", StatusCode: 204}, nil
+}

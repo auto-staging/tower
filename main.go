@@ -86,6 +86,10 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return controller.GitHubWebhookCreateController(request)
 	}
 
+	if request.Resource == "/webhooks/github" && request.HTTPMethod == "POST" && request.Headers["X-GitHub-Event"] == "delete" {
+		return controller.GitHubWebhookDeleteController(request)
+	}
+
 	// Default reflector for debugging
 	path, _ := url.PathUnescape(request.Path)
 
