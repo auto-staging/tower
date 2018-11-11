@@ -30,6 +30,15 @@ func AddEnvironmentForRepositoryController(request events.APIGatewayProxyRequest
 		return types.InvalidRequestBodyResponse, nil
 	}
 
+	repository := types.Repository{}
+	err = model.GetSingleRepository(&repository, request.PathParameters["name"])
+	if err != nil {
+		return types.InternalServerErrorResponse, nil
+	}
+	if repository.Repository == "" {
+		return events.APIGatewayProxyResponse{Body: "{\"message\": \"Repository not found\"}", StatusCode: 404}, nil
+	}
+
 	result, err := model.AddEnvironmentForRepository(env, request.PathParameters["name"])
 
 	if err != nil {
