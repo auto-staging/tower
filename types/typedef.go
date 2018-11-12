@@ -43,7 +43,7 @@ type Environment struct {
 	Repository           string            `json:"repository"`
 	Branch               string            `json:"branch"`
 	CreationDate         string            `json:"creationDate"`
-	State                string            `json:"state"`
+	Status               string            `json:"status"`
 	ShutdownSchedules    []TimeSchedule    `json:"shutdownSchedules"`
 	StartupSchedules     []TimeSchedule    `json:"startupSchedules"`
 	EnvironmentVariables map[string]string `json:"environmentVariables"`
@@ -71,7 +71,7 @@ type EnvironmentPost struct {
 type EnvironmentStatus struct {
 	Repository string `json:"repository"`
 	Branch     string `json:"branch"`
-	State      string `json:"state"`
+	Status     string `json:"status"`
 }
 
 type Reflector struct {

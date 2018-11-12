@@ -11,9 +11,12 @@ import (
 func GetAllEnvironmentsStatusInformation(status *[]types.EnvironmentStatus) error {
 	svc := getDynamoDbClient()
 
-	// TODO Limit DynmoDB query / scan to required attributes
 	result, err := svc.Scan(&dynamodb.ScanInput{
 		TableName: aws.String("auto-staging-environments"),
+		ExpressionAttributeNames: map[string]*string{
+			"#status": aws.String("status"), // Workaround reserved keywoard issue
+		},
+		ProjectionExpression: aws.String("repository, branch, #status"),
 	})
 
 	if err != nil {
@@ -29,7 +32,6 @@ func GetAllEnvironmentsStatusInformation(status *[]types.EnvironmentStatus) erro
 func GetSingleEnvironmentStatusInformation(status *types.EnvironmentStatus, name string, branch string) error {
 	svc := getDynamoDbClient()
 
-	// TODO Limit DynmoDB query / scan to required attributes
 	result, err := svc.GetItem(&dynamodb.GetItemInput{
 		TableName: aws.String("auto-staging-environments"),
 		Key: map[string]*dynamodb.AttributeValue{
@@ -40,6 +42,10 @@ func GetSingleEnvironmentStatusInformation(status *types.EnvironmentStatus, name
 				S: aws.String(branch),
 			},
 		},
+		ExpressionAttributeNames: map[string]*string{
+			"#status": aws.String("status"), // Workaround reserved keywoard issue
+		},
+		ProjectionExpression: aws.String("repository, branch, #status"),
 	})
 
 	if err != nil {
