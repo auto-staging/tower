@@ -71,7 +71,7 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 	inputEnvironment := types.Environment{
 		Repository:           name,
 		Branch:               environment.Branch,
-		State:                "pending",
+		Status:               "pending",
 		CreationDate:         creation.String(),
 		ShutdownSchedules:    environment.ShutdownSchedules,
 		StartupSchedules:     environment.StartupSchedules,
