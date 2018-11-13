@@ -1,7 +1,11 @@
 package controller
 
 import (
+	"crypto/hmac"
+	"crypto/sha1"
+	"encoding/hex"
 	"encoding/json"
+	"os"
 	"regexp"
 	"strings"
 
@@ -16,6 +20,10 @@ func GitHubWebhookPingController(request events.APIGatewayProxyRequest) (events.
 }
 
 func GitHubWebhookCreateController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	if !verifyHMAC(request.Body, request.Headers["X-Hub-Signature"]) {
+		return events.APIGatewayProxyResponse{Body: "{ \"message\" : \"HMAC validation failed\" }", StatusCode: 400}, nil
+	}
+
 	webhook := types.GitHubWebhook{}
 	err := json.Unmarshal([]byte(request.Body), &webhook)
 	if err != nil || webhook.RefType != "branch" {
@@ -56,6 +64,10 @@ func GitHubWebhookCreateController(request events.APIGatewayProxyRequest) (event
 }
 
 func GitHubWebhookDeleteController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	if !verifyHMAC(request.Body, request.Headers["X-Hub-Signature"]) {
+		return events.APIGatewayProxyResponse{Body: "{ \"message\" : \"HMAC validation failed\" }", StatusCode: 400}, nil
+	}
+
 	webhook := types.GitHubWebhook{}
 	err := json.Unmarshal([]byte(request.Body), &webhook)
 	if err != nil || webhook.RefType != "branch" {
@@ -73,4 +85,15 @@ func GitHubWebhookDeleteController(request events.APIGatewayProxyRequest) (event
 	}
 
 	return events.APIGatewayProxyResponse{Body: "", StatusCode: 204}, nil
+}
+
+func verifyHMAC(body string, githubHash string) bool {
+	messageMAC := githubHash[5:] // first 5 chars are sha1=
+	messageMACBuf, _ := hex.DecodeString(messageMAC)
+
+	mac := hmac.New(sha1.New, []byte(os.Getenv("WEBHOOK_SECRET_TOKEN")))
+	mac.Write([]byte(body))
+	expectedMAC := mac.Sum(nil)
+
+	return hmac.Equal(messageMACBuf, expectedMAC)
 }
