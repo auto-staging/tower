@@ -7,8 +7,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lambda"
-	"gitlab.com/janritter/auto-staging-tower/config"
-	"gitlab.com/janritter/auto-staging-tower/types"
+	"gitlab.com/auto-staging/tower/config"
+	"gitlab.com/auto-staging/tower/types"
 )
 
 func GetConfiguration(configuration *types.TowerConfiguration) error {

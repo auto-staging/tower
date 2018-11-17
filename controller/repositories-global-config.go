@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 
 	"github.com/aws/aws-lambda-go/events"
-	"gitlab.com/janritter/auto-staging-tower/config"
-	"gitlab.com/janritter/auto-staging-tower/model"
-	"gitlab.com/janritter/auto-staging-tower/types"
+	"gitlab.com/auto-staging/tower/config"
+	"gitlab.com/auto-staging/tower/model"
+	"gitlab.com/auto-staging/tower/types"
 )
 
 func GetGlobalRepositoryConfigController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {

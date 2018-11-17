@@ -5,8 +5,8 @@ import (
 	"net/url"
 
 	"github.com/aws/aws-lambda-go/events"
-	"gitlab.com/janritter/auto-staging-tower/model"
-	"gitlab.com/janritter/auto-staging-tower/types"
+	"gitlab.com/auto-staging/tower/model"
+	"gitlab.com/auto-staging/tower/types"
 )
 
 func GetAllEnvironmentsStatusInformationController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {

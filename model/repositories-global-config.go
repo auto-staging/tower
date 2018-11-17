@@ -4,8 +4,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"gitlab.com/janritter/auto-staging-tower/config"
-	"gitlab.com/janritter/auto-staging-tower/types"
+	"gitlab.com/auto-staging/tower/config"
+	"gitlab.com/auto-staging/tower/types"
 )
 
 func GetGlobalRepositoryConfiguration(configuration *types.EnvironmentGeneralConfig, stage string) error {

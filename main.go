@@ -7,9 +7,9 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"gitlab.com/janritter/auto-staging-tower/config"
-	"gitlab.com/janritter/auto-staging-tower/controller"
-	"gitlab.com/janritter/auto-staging-tower/types"
+	"gitlab.com/auto-staging/tower/config"
+	"gitlab.com/auto-staging/tower/controller"
+	"gitlab.com/auto-staging/tower/types"
 )
 
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
