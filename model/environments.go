@@ -73,17 +73,18 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 	creation := time.Now().UTC()
 
 	inputEnvironment := types.Environment{
-		Repository:           name,
-		Branch:               environment.Branch,
-		Status:               "pending",
-		CreationDate:         creation.String(),
-		ShutdownSchedules:    environment.ShutdownSchedules,
-		StartupSchedules:     environment.StartupSchedules,
-		EnvironmentVariables: environment.EnvironmentVariables,
+		Repository:            name,
+		Branch:                environment.Branch,
+		Status:                "pending",
+		CreationDate:          creation.String(),
+		InfrastructureRepoURL: environment.InfrastructureRepoURL,
+		ShutdownSchedules:     environment.ShutdownSchedules,
+		StartupSchedules:      environment.StartupSchedules,
+		EnvironmentVariables:  environment.EnvironmentVariables,
 	}
 
 	// Overwrite unset values with defaults from the parent repository
-	if inputEnvironment.ShutdownSchedules == nil || inputEnvironment.StartupSchedules == nil || inputEnvironment.EnvironmentVariables == nil {
+	if inputEnvironment.ShutdownSchedules == nil || inputEnvironment.StartupSchedules == nil || inputEnvironment.EnvironmentVariables == nil || inputEnvironment.InfrastructureRepoURL == "" {
 		config.Logger.Log(errors.New("Overwriting unset variables with global defaults"), map[string]string{"module": "model/AddEnvironmentForRepository", "operation": "overwrite"}, 4)
 		repository := types.Repository{}
 		err := GetSingleRepository(&repository, name)
@@ -101,6 +102,10 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 		if inputEnvironment.EnvironmentVariables == nil {
 			config.Logger.Log(errors.New("Overwriting EnvironmentVariables - Default = "+fmt.Sprint(repository.EnvironmentVariables)), map[string]string{"module": "controller/AddEnvironmentForRepository", "operation": "overwrite/EnvironmentVariables"}, 4)
 			inputEnvironment.EnvironmentVariables = repository.EnvironmentVariables
+		}
+		if inputEnvironment.InfrastructureRepoURL == "" {
+			config.Logger.Log(errors.New("Overwriting InfrastructureRepoURL - Default = "+fmt.Sprint(repository.InfrastructureRepoURL)), map[string]string{"module": "controller/AddEnvironmentForRepository", "operation": "overwrite/InfrastructureRepoURL"}, 4)
+			inputEnvironment.InfrastructureRepoURL = repository.InfrastructureRepoURL
 		}
 	}
 
@@ -125,7 +130,7 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 		Branch:               inputEnvironment.Branch,
 		Repository:           inputEnvironment.Repository,
 		EnvironmentVariables: inputEnvironment.EnvironmentVariables,
-		RepositoryURL:        "https://github.com/janritter/kvb-api.git",
+		RepositoryURL:        inputEnvironment.InfrastructureRepoURL,
 	}
 	body, _ := json.Marshal(event)
 
@@ -148,9 +153,10 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 	svc := getDynamoDbClient()
 
 	updateStruct := types.EnvironmentUpdate{
-		ShutdownSchedules:    environment.ShutdownSchedules,
-		StartupSchedules:     environment.StartupSchedules,
-		EnvironmentVariables: environment.EnvironmentVariables,
+		InfrastructureRepoURL: environment.InfrastructureRepoURL,
+		ShutdownSchedules:     environment.ShutdownSchedules,
+		StartupSchedules:      environment.StartupSchedules,
+		EnvironmentVariables:  environment.EnvironmentVariables,
 	}
 
 	update, err := dynamodbattribute.MarshalMap(updateStruct)
@@ -170,7 +176,7 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 				S: aws.String(branch),
 			},
 		},
-		UpdateExpression:          aws.String("SET shutdownSchedules = :shutdownSchedules, startupSchedules = :startupSchedules, environmentVariables = :environmentVariables"),
+		UpdateExpression:          aws.String("SET shutdownSchedules = :shutdownSchedules, startupSchedules = :startupSchedules, environmentVariables = :environmentVariables, infrastructureRepoURL = :infrastructureRepoURL"),
 		ExpressionAttributeValues: update,
 		ConditionExpression:       aws.String("attribute_exists(repository) AND attribute_exists(branch)"),
 		ReturnValues:              aws.String("ALL_NEW"),
@@ -181,6 +187,8 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 		config.Logger.Log(err, map[string]string{"module": "model/UpdateEnvironment", "operation": "dynamodb/exec"}, 0)
 		return types.Environment{}, err
 	}
+
+	// TODO Invoke Builder Lambda with changed env vars and url
 
 	response := types.Environment{}
 	dynamodbattribute.UnmarshalMap(result.Attributes, &response)
