@@ -100,9 +100,5 @@ func DeleteSingleEnvironmentController(request events.APIGatewayProxyRequest) (e
 		return types.InternalServerErrorResponse, nil
 	}
 
-	if obj.Repository == "" {
-		return types.NotFoundErrorResponse, nil
-	}
-
-	return events.APIGatewayProxyResponse{Body: "", StatusCode: 204}, nil
+	return events.APIGatewayProxyResponse{Body: "{ \"message\" : \"Invoked Builder\" }", StatusCode: 202}, nil
 }

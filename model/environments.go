@@ -1,13 +1,17 @@
 package model
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
 
+	"github.com/aws/aws-sdk-go/service/lambda"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	builderTypes "gitlab.com/auto-staging/builder/types"
 	"gitlab.com/janritter/auto-staging-tower/config"
 	"gitlab.com/janritter/auto-staging-tower/types"
 )
@@ -115,6 +119,28 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 		return types.Environment{}, err
 	}
 
+	// Invoke Builder Lambda to generate environment
+	event := builderTypes.Event{
+		Operation:            "CREATE",
+		Branch:               inputEnvironment.Branch,
+		Repository:           inputEnvironment.Repository,
+		EnvironmentVariables: inputEnvironment.EnvironmentVariables,
+		RepositoryURL:        "https://github.com/janritter/kvb-api.git",
+	}
+	body, _ := json.Marshal(event)
+
+	client := getLambdaClient()
+	_, err = client.Invoke(&lambda.InvokeInput{
+		FunctionName:   aws.String("auto-staging-builder"),
+		InvocationType: aws.String("Event"),
+		Payload:        body,
+	})
+
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/AddEnvironmentForRepositroy", "operation": "builder/invoke"}, 0)
+		return types.Environment{}, err
+	}
+
 	return inputEnvironment, nil
 }
 
@@ -163,27 +189,25 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 }
 
 func DeleteSingleEnvironment(environment *types.Environment, name string, branch string) error {
-	svc := getDynamoDbClient()
+	// Invoke Builder Lambda to delete environment
+	event := builderTypes.Event{
+		Operation:  "DELETE",
+		Branch:     branch,
+		Repository: name,
+	}
+	body, _ := json.Marshal(event)
 
-	result, err := svc.DeleteItem(&dynamodb.DeleteItemInput{
-		TableName: aws.String("auto-staging-environments"),
-		Key: map[string]*dynamodb.AttributeValue{
-			"repository": {
-				S: aws.String(name),
-			},
-			"branch": {
-				S: aws.String(branch),
-			},
-		},
-		ReturnValues: aws.String("ALL_OLD"),
+	client := getLambdaClient()
+	_, err := client.Invoke(&lambda.InvokeInput{
+		FunctionName:   aws.String("auto-staging-builder"),
+		InvocationType: aws.String("Event"),
+		Payload:        body,
 	})
 
 	if err != nil {
-		config.Logger.Log(err, map[string]string{"module": "model/DeleteSingleEnvironment", "operation": "dynamodb/exec"}, 0)
+		config.Logger.Log(err, map[string]string{"module": "model/DeleteSingleEnvironment", "operation": "builder/invoke"}, 0)
 		return err
 	}
-
-	dynamodbattribute.UnmarshalMap(result.Attributes, environment)
 
 	return nil
 }
