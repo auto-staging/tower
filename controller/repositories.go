@@ -106,8 +106,18 @@ func PutSingleRepositoryController(request events.APIGatewayProxyRequest) (event
 }
 
 func DeleteSingleRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+	exist, err := model.CheckIfEnvironmentsForRepositoryExist(request.PathParameters["name"])
+	if err != nil {
+		return types.InternalServerErrorResponse, nil
+	}
+
+	if exist {
+		return events.APIGatewayProxyResponse{Body: "{ \"message\" : \"First remove all environments for the repository\" }", StatusCode: 400}, nil
+	}
+
 	obj := types.Repository{}
-	err := model.DeleteSingleRepository(&obj, request.PathParameters["name"])
+	err = model.DeleteSingleRepository(&obj, request.PathParameters["name"])
 	if err != nil {
 		return types.InternalServerErrorResponse, nil
 	}

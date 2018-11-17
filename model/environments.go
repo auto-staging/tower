@@ -219,3 +219,31 @@ func DeleteSingleEnvironment(environment *types.Environment, name string, branch
 
 	return nil
 }
+
+func CheckIfEnvironmentsForRepositoryExist(name string) (bool, error) {
+	svc := getDynamoDbClient()
+
+	result, err := svc.Query(&dynamodb.QueryInput{
+		TableName:              aws.String("auto-staging-environments"),
+		KeyConditionExpression: aws.String("repository = :repository"),
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":repository": {
+				S: aws.String(name),
+			},
+		},
+	})
+
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/CheckIfEnvironmentsForRepositoryExist", "operation": "dynamodb/exec"}, 0)
+		return false, err
+	}
+
+	environments := []types.Environment{}
+	dynamodbattribute.UnmarshalListOfMaps(result.Items, &environments)
+
+	if len(environments) > 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
