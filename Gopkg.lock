@@ -64,9 +64,15 @@
   packages = ["."]
   revision = "0b12d6b5"
 
+[[projects]]
+  branch = "master"
+  name = "gitlab.com/auto-staging/builder"
+  packages = ["types"]
+  revision = "cf9ac43987dafea7dd9db19d4119762400a9d9a8"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a6658330dcbf2c4eedd456b7d62b8db136b98a594031cbba6f44f6c8640ec190"
+  inputs-digest = "bb04307d8a69e72b8ca9a1e74262a2bee06394bdce7a75b4ebfaf385485bd688"
   solver-name = "gps-cdcl"
   solver-version = 1
