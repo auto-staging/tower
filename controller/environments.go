@@ -93,9 +93,23 @@ func PutSinglEnvironmentForRepositoryController(request events.APIGatewayProxyRe
 }
 
 func DeleteSingleEnvironmentController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	obj := types.Environment{}
+	obj := types.EnvironmentStatus{}
 	branch, _ := url.PathUnescape(request.PathParameters["branch"])
-	err := model.DeleteSingleEnvironment(&obj, request.PathParameters["name"], branch)
+	err := model.GetSingleEnvironmentStatusInformation(&obj, request.PathParameters["name"], branch)
+	if err != nil {
+		return types.InternalServerErrorResponse, nil
+	}
+
+	if obj.Repository == "" {
+		return types.NotFoundErrorResponse, nil
+	}
+
+	if obj.Status == "initiating" {
+		return events.APIGatewayProxyResponse{Body: "{ \"message\" : \"Cannot remove environment in init state, retry later\" }", StatusCode: 400}, nil
+	}
+
+	env := types.Environment{}
+	err = model.DeleteSingleEnvironment(&env, request.PathParameters["name"], branch)
 	if err != nil {
 		return types.InternalServerErrorResponse, nil
 	}
