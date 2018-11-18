@@ -25,6 +25,7 @@
     "aws/credentials/ec2rolecreds",
     "aws/credentials/endpointcreds",
     "aws/credentials/stscreds",
+    "aws/crr",
     "aws/csm",
     "aws/defaults",
     "aws/ec2metadata",
@@ -50,8 +51,8 @@
     "service/lambda",
     "service/sts"
   ]
-  revision = "c0037b52736b07cea4e0cb6521f7995adef833bc"
-  version = "v1.15.59"
+  revision = "5ebc7a404e942062fd3aa7ff50975498716eb990"
+  version = "v1.15.78"
 
 [[projects]]
   name = "github.com/janritter/go-lightning-log"
@@ -68,7 +69,7 @@
   branch = "master"
   name = "gitlab.com/auto-staging/builder"
   packages = ["types"]
-  revision = "cf9ac43987dafea7dd9db19d4119762400a9d9a8"
+  revision = "3e594ffc89d364a32895600edae2c22785abb56c"
 
 [solve-meta]
   analyzer-name = "dep"

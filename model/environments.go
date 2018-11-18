@@ -126,11 +126,11 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 
 	// Invoke Builder Lambda to generate environment
 	event := builderTypes.Event{
-		Operation:            "CREATE",
-		Branch:               inputEnvironment.Branch,
-		Repository:           inputEnvironment.Repository,
-		EnvironmentVariables: inputEnvironment.EnvironmentVariables,
-		RepositoryURL:        inputEnvironment.InfrastructureRepoURL,
+		Operation:             "CREATE",
+		Branch:                inputEnvironment.Branch,
+		Repository:            inputEnvironment.Repository,
+		EnvironmentVariables:  inputEnvironment.EnvironmentVariables,
+		InfrastructureRepoUrl: inputEnvironment.InfrastructureRepoURL,
 	}
 	body, _ := json.Marshal(event)
 
@@ -188,7 +188,27 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 		return types.Environment{}, err
 	}
 
-	// TODO Invoke Builder Lambda with changed env vars and url
+	// Invoke Builder Lambda to update environment
+	event := builderTypes.Event{
+		Operation:             "UPDATE",
+		Branch:                branch,
+		Repository:            name,
+		InfrastructureRepoUrl: environment.InfrastructureRepoURL,
+		EnvironmentVariables:  environment.EnvironmentVariables,
+	}
+	body, _ := json.Marshal(event)
+
+	client := getLambdaClient()
+	_, err = client.Invoke(&lambda.InvokeInput{
+		FunctionName:   aws.String("auto-staging-builder"),
+		InvocationType: aws.String("Event"),
+		Payload:        body,
+	})
+
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/UpdateSingleRepository", "operation": "builder/invoke"}, 0)
+		return types.Environment{}, err
+	}
 
 	response := types.Environment{}
 	dynamodbattribute.UnmarshalMap(result.Attributes, &response)
