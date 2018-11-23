@@ -78,6 +78,7 @@ func UpdateSingleRepository(repository *types.Repository, name string) error {
 		StartupSchedules:      repository.StartupSchedules,
 		EnvironmentVariables:  repository.EnvironmentVariables,
 		InfrastructureRepoURL: repository.InfrastructureRepoURL,
+		CodeBuildRoleARN:      repository.CodeBuildRoleARN,
 	}
 
 	update, err := dynamodbattribute.MarshalMap(updateStruct)
@@ -94,7 +95,7 @@ func UpdateSingleRepository(repository *types.Repository, name string) error {
 				S: aws.String(name),
 			},
 		},
-		UpdateExpression:          aws.String("SET webhook = :webhook, filters = :filters, shutdownSchedules = :shutdownSchedules, startupSchedules = :startupSchedules, environmentVariables = :environmentVariables, infrastructureRepoURL = :infrastructureRepoURL"),
+		UpdateExpression:          aws.String("SET webhook = :webhook, filters = :filters, shutdownSchedules = :shutdownSchedules, startupSchedules = :startupSchedules, environmentVariables = :environmentVariables, infrastructureRepoURL = :infrastructureRepoURL, codeBuildRoleARN = :codeBuildRoleARN"),
 		ExpressionAttributeValues: update,
 		ConditionExpression:       aws.String("attribute_exists(repository)"),
 		ReturnValues:              aws.String("ALL_NEW"),
