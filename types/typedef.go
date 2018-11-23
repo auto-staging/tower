@@ -10,68 +10,82 @@ type TowerConfiguration struct {
 	LogLevel int `json:"logLevel"`
 }
 
+type EnvironmentVariable struct {
+	Name  string `json:"name"`
+	Type  string `json:"type"`
+	Value string `json:"value"`
+}
+
 type Repository struct {
-	Repository            string            `json:"repository"`
-	InfrastructureRepoURL string            `json:"infrastructureRepoURL"`
-	Webhook               bool              `json:"webhook"`
-	Filters               []string          `json:"filters"`
-	ShutdownSchedules     []TimeSchedule    `json:"shutdownSchedules"`
-	StartupSchedules      []TimeSchedule    `json:"startupSchedules"`
-	EnvironmentVariables  map[string]string `json:"environmentVariables"`
+	Repository            string                `json:"repository"`
+	InfrastructureRepoURL string                `json:"infrastructureRepoURL"`
+	Webhook               bool                  `json:"webhook"`
+	Filters               []string              `json:"filters"`
+	ShutdownSchedules     []TimeSchedule        `json:"shutdownSchedules"`
+	StartupSchedules      []TimeSchedule        `json:"startupSchedules"`
+	CodeBuildRoleARN      string                `json:"codeBuildRoleARN"`
+	EnvironmentVariables  []EnvironmentVariable `json:"environmentVariables"`
 }
 
 type RepositoryUpdate struct {
-	InfrastructureRepoURL string            `json:":infrastructureRepoURL"`
-	Webhook               bool              `json:":webhook"`
-	Filters               []string          `json:":filters"`
-	ShutdownSchedules     []TimeSchedule    `json:":shutdownSchedules"`
-	StartupSchedules      []TimeSchedule    `json:":startupSchedules"`
-	EnvironmentVariables  map[string]string `json:":environmentVariables"`
+	InfrastructureRepoURL string                `json:":infrastructureRepoURL"`
+	Webhook               bool                  `json:":webhook"`
+	Filters               []string              `json:":filters"`
+	ShutdownSchedules     []TimeSchedule        `json:":shutdownSchedules"`
+	StartupSchedules      []TimeSchedule        `json:":startupSchedules"`
+	CodeBuildRoleARN      string                `json:":codeBuildRoleARN"`
+	EnvironmentVariables  []EnvironmentVariable `json:":environmentVariables"`
 }
 
 type EnvironmentGeneralConfig struct {
-	ShutdownSchedules    []TimeSchedule    `json:"shutdownSchedules"`
-	StartupSchedules     []TimeSchedule    `json:"startupSchedules"`
-	EnvironmentVariables map[string]string `json:"environmentVariables"`
+	ShutdownSchedules    []TimeSchedule        `json:"shutdownSchedules"`
+	StartupSchedules     []TimeSchedule        `json:"startupSchedules"`
+	CodeBuildRoleARN     string                `json:"codeBuildRoleARN"`
+	EnvironmentVariables []EnvironmentVariable `json:"environmentVariables"`
 }
 
 type EnvironmentGeneralConfigUpdate struct {
-	ShutdownSchedules    []TimeSchedule    `json:":shutdownSchedules"`
-	StartupSchedules     []TimeSchedule    `json:":startupSchedules"`
-	EnvironmentVariables map[string]string `json:":environmentVariables"`
+	ShutdownSchedules    []TimeSchedule        `json:":shutdownSchedules"`
+	StartupSchedules     []TimeSchedule        `json:":startupSchedules"`
+	CodeBuildRoleARN     string                `json:":codeBuildRoleARN"`
+	EnvironmentVariables []EnvironmentVariable `json:":environmentVariables"`
 }
 
 type Environment struct {
-	Repository            string            `json:"repository"`
-	Branch                string            `json:"branch"`
-	CreationDate          string            `json:"creationDate"`
-	Status                string            `json:"status"`
-	InfrastructureRepoURL string            `json:"infrastructureRepoURL"`
-	ShutdownSchedules     []TimeSchedule    `json:"shutdownSchedules"`
-	StartupSchedules      []TimeSchedule    `json:"startupSchedules"`
-	EnvironmentVariables  map[string]string `json:"environmentVariables"`
+	Repository            string                `json:"repository"`
+	Branch                string                `json:"branch"`
+	CreationDate          string                `json:"creationDate"`
+	Status                string                `json:"status"`
+	InfrastructureRepoURL string                `json:"infrastructureRepoURL"`
+	ShutdownSchedules     []TimeSchedule        `json:"shutdownSchedules"`
+	StartupSchedules      []TimeSchedule        `json:"startupSchedules"`
+	CodeBuildRoleARN      string                `json:"codeBuildRoleARN"`
+	EnvironmentVariables  []EnvironmentVariable `json:"environmentVariables"`
 }
 
 type EnvironmentUpdate struct {
-	InfrastructureRepoURL string            `json:":infrastructureRepoURL"`
-	ShutdownSchedules     []TimeSchedule    `json:":shutdownSchedules"`
-	StartupSchedules      []TimeSchedule    `json:":startupSchedules"`
-	EnvironmentVariables  map[string]string `json:":environmentVariables"`
+	InfrastructureRepoURL string                `json:":infrastructureRepoURL"`
+	ShutdownSchedules     []TimeSchedule        `json:":shutdownSchedules"`
+	StartupSchedules      []TimeSchedule        `json:":startupSchedules"`
+	CodeBuildRoleARN      string                `json:":codeBuildRoleARN"`
+	EnvironmentVariables  []EnvironmentVariable `json:":environmentVariables"`
 }
 
 type EnvironmentPut struct {
-	InfrastructureRepoURL string            `json:"infrastructureRepoURL"`
-	ShutdownSchedules     []TimeSchedule    `json:"shutdownSchedules"`
-	StartupSchedules      []TimeSchedule    `json:"startupSchedules"`
-	EnvironmentVariables  map[string]string `json:"environmentVariables"`
+	InfrastructureRepoURL string                `json:"infrastructureRepoURL"`
+	ShutdownSchedules     []TimeSchedule        `json:"shutdownSchedules"`
+	StartupSchedules      []TimeSchedule        `json:"startupSchedules"`
+	CodeBuildRoleARN      string                `json:"codeBuildRoleARN"`
+	EnvironmentVariables  []EnvironmentVariable `json:"environmentVariables"`
 }
 
 type EnvironmentPost struct {
-	Branch                string            `json:"branch"`
-	InfrastructureRepoURL string            `json:"infrastructureRepoURL"`
-	ShutdownSchedules     []TimeSchedule    `json:"shutdownSchedules"`
-	StartupSchedules      []TimeSchedule    `json:"startupSchedules"`
-	EnvironmentVariables  map[string]string `json:"environmentVariables"`
+	Branch                string                `json:"branch"`
+	InfrastructureRepoURL string                `json:"infrastructureRepoURL"`
+	ShutdownSchedules     []TimeSchedule        `json:"shutdownSchedules"`
+	StartupSchedules      []TimeSchedule        `json:"startupSchedules"`
+	CodeBuildRoleARN      string                `json:"codeBuildRoleARN"`
+	EnvironmentVariables  []EnvironmentVariable `json:"environmentVariables"`
 }
 
 type EnvironmentStatus struct {

@@ -9,8 +9,8 @@
     "lambda/messages",
     "lambdacontext"
   ]
-  revision = "2d482ef09017ae953b1e8d5a6ddac5b696663a3c"
-  version = "v1.6.0"
+  revision = "fb8f88d824489a878aee1e0badde7d8e129f8767"
+  version = "v1.7.0"
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
@@ -51,8 +51,8 @@
     "service/lambda",
     "service/sts"
   ]
-  revision = "5ebc7a404e942062fd3aa7ff50975498716eb990"
-  version = "v1.15.78"
+  revision = "66af558c91f83a793b4a0101f70742062982f611"
+  version = "v1.15.81"
 
 [[projects]]
   name = "github.com/janritter/go-lightning-log"
@@ -65,15 +65,9 @@
   packages = ["."]
   revision = "0b12d6b5"
 
-[[projects]]
-  branch = "master"
-  name = "gitlab.com/auto-staging/builder"
-  packages = ["types"]
-  revision = "3e594ffc89d364a32895600edae2c22785abb56c"
-
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "bb04307d8a69e72b8ca9a1e74262a2bee06394bdce7a75b4ebfaf385485bd688"
+  inputs-digest = "a6658330dcbf2c4eedd456b7d62b8db136b98a594031cbba6f44f6c8640ec190"
   solver-name = "gps-cdcl"
   solver-version = 1
