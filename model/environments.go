@@ -11,7 +11,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	builderTypes "gitlab.com/auto-staging/builder/types"
 	"gitlab.com/auto-staging/tower/config"
 	"gitlab.com/auto-staging/tower/types"
 )
@@ -81,6 +80,7 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 		ShutdownSchedules:     environment.ShutdownSchedules,
 		StartupSchedules:      environment.StartupSchedules,
 		EnvironmentVariables:  environment.EnvironmentVariables,
+		CodeBuildRoleARN:      environment.CodeBuildRoleARN,
 	}
 
 	// Overwrite unset values with defaults from the parent repository
@@ -125,12 +125,13 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 	}
 
 	// Invoke Builder Lambda to generate environment
-	event := builderTypes.Event{
+	event := types.BuilderEvent{
 		Operation:             "CREATE",
 		Branch:                inputEnvironment.Branch,
 		Repository:            inputEnvironment.Repository,
+		CodeBuildRoleARN:      inputEnvironment.CodeBuildRoleARN,
 		EnvironmentVariables:  inputEnvironment.EnvironmentVariables,
-		InfrastructureRepoUrl: inputEnvironment.InfrastructureRepoURL,
+		InfrastructureRepoURL: inputEnvironment.InfrastructureRepoURL,
 	}
 	body, _ := json.Marshal(event)
 
@@ -189,11 +190,11 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 	}
 
 	// Invoke Builder Lambda to update environment
-	event := builderTypes.Event{
+	event := types.BuilderEvent{
 		Operation:             "UPDATE",
 		Branch:                branch,
 		Repository:            name,
-		InfrastructureRepoUrl: environment.InfrastructureRepoURL,
+		InfrastructureRepoURL: environment.InfrastructureRepoURL,
 		EnvironmentVariables:  environment.EnvironmentVariables,
 	}
 	body, _ := json.Marshal(event)
@@ -218,7 +219,7 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 
 func DeleteSingleEnvironment(environment *types.Environment, name string, branch string) error {
 	// Invoke Builder Lambda to delete environment
-	event := builderTypes.Event{
+	event := types.BuilderEvent{
 		Operation:  "DELETE",
 		Branch:     branch,
 		Repository: name,
