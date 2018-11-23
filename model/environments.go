@@ -84,7 +84,7 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 	}
 
 	// Overwrite unset values with defaults from the parent repository
-	if inputEnvironment.ShutdownSchedules == nil || inputEnvironment.StartupSchedules == nil || inputEnvironment.EnvironmentVariables == nil || inputEnvironment.InfrastructureRepoURL == "" {
+	if inputEnvironment.ShutdownSchedules == nil || inputEnvironment.StartupSchedules == nil || inputEnvironment.EnvironmentVariables == nil || inputEnvironment.InfrastructureRepoURL == "" || inputEnvironment.CodeBuildRoleARN == "" {
 		config.Logger.Log(errors.New("Overwriting unset variables with global defaults"), map[string]string{"module": "model/AddEnvironmentForRepository", "operation": "overwrite"}, 4)
 		repository := types.Repository{}
 		err := GetSingleRepository(&repository, name)
@@ -106,6 +106,10 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 		if inputEnvironment.InfrastructureRepoURL == "" {
 			config.Logger.Log(errors.New("Overwriting InfrastructureRepoURL - Default = "+fmt.Sprint(repository.InfrastructureRepoURL)), map[string]string{"module": "controller/AddEnvironmentForRepository", "operation": "overwrite/InfrastructureRepoURL"}, 4)
 			inputEnvironment.InfrastructureRepoURL = repository.InfrastructureRepoURL
+		}
+		if inputEnvironment.CodeBuildRoleARN == "" {
+			config.Logger.Log(errors.New("Overwriting codeBuildRoleARN - Default = "+fmt.Sprint(repository.CodeBuildRoleARN)), map[string]string{"module": "controller/AddEnvironmentForRepository", "operation": "overwrite/codeBuildRoleARN"}, 4)
+			inputEnvironment.CodeBuildRoleARN = repository.CodeBuildRoleARN
 		}
 	}
 
@@ -157,6 +161,7 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 		InfrastructureRepoURL: environment.InfrastructureRepoURL,
 		ShutdownSchedules:     environment.ShutdownSchedules,
 		StartupSchedules:      environment.StartupSchedules,
+		CodeBuildRoleARN:      environment.CodeBuildRoleARN,
 		EnvironmentVariables:  environment.EnvironmentVariables,
 	}
 
@@ -195,6 +200,7 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 		Branch:                branch,
 		Repository:            name,
 		InfrastructureRepoURL: environment.InfrastructureRepoURL,
+		CodeBuildRoleARN:      environment.CodeBuildRoleARN,
 		EnvironmentVariables:  environment.EnvironmentVariables,
 	}
 	body, _ := json.Marshal(event)
