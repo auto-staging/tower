@@ -11,7 +11,7 @@ type TowerConfiguration struct {
 }
 
 type EnvironmentVariable struct {
-	Key   string `json:"key"`
+	Name  string `json:"name"`
 	Type  string `json:"type"`
 	Value string `json:"value"`
 }
