@@ -1,6 +1,9 @@
 package model
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
@@ -47,8 +50,30 @@ func GetSingleRepository(repository *types.Repository, name string) error {
 	return nil
 }
 
-func AddRepository(repository types.Repository) error {
+func AddRepository(repository *types.Repository, stage string) error {
 	svc := getDynamoDbClient()
+
+	// Overwrite unset values with general config defaults
+	if repository.ShutdownSchedules == nil || repository.StartupSchedules == nil || repository.EnvironmentVariables == nil || repository.CodeBuildRoleARN == "" {
+		config.Logger.Log(errors.New("Overwriting unset variables with global defaults"), map[string]string{"module": "model/AddRepository", "operation": "overwrite"}, 4)
+		configuration := types.GeneralConfig{}
+		err := GetGlobalRepositoryConfiguration(&configuration, stage)
+		if err != nil {
+			return err
+		}
+		if repository.ShutdownSchedules == nil {
+			config.Logger.Log(errors.New("Overwriting ShutdownSchedules - Default = "+fmt.Sprint(configuration.ShutdownSchedules)), map[string]string{"module": "model/AddRepository", "operation": "overwrite/ShutdownSchedules"}, 4)
+			repository.ShutdownSchedules = configuration.ShutdownSchedules
+		}
+		if repository.StartupSchedules == nil {
+			config.Logger.Log(errors.New("Overwriting StartupSchedules - Default = "+fmt.Sprint(configuration.StartupSchedules)), map[string]string{"module": "model/AddRepository", "operation": "overwrite/StartupSchedules"}, 4)
+			repository.StartupSchedules = configuration.StartupSchedules
+		}
+		if repository.EnvironmentVariables == nil {
+			config.Logger.Log(errors.New("Overwriting EnvironmentVariables - Default = "+fmt.Sprint(configuration.EnvironmentVariables)), map[string]string{"module": "model/AddRepository", "operation": "overwrite/EnvironmentVariables"}, 4)
+			repository.EnvironmentVariables = configuration.EnvironmentVariables
+		}
+	}
 
 	av, err := dynamodbattribute.MarshalMap(repository)
 

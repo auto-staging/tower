@@ -2,8 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -32,29 +30,7 @@ func AddRepositoryController(request events.APIGatewayProxyRequest) (events.APIG
 		return types.InvalidRequestBodyResponse, nil
 	}
 
-	// Overwrite unset values with defaults
-	if repo.ShutdownSchedules == nil || repo.StartupSchedules == nil || repo.EnvironmentVariables == nil || repo.CodeBuildRoleARN == "" {
-		config.Logger.Log(errors.New("Overwriting unset variables with global defaults"), map[string]string{"module": "controller/AddRepositoryController", "operation": "overwrite"}, 4)
-		configuration := types.GeneralConfig{}
-		err = model.GetGlobalRepositoryConfiguration(&configuration, request.RequestContext.Stage)
-		if err != nil {
-			return types.InternalServerErrorResponse, nil
-		}
-		if repo.ShutdownSchedules == nil {
-			config.Logger.Log(errors.New("Overwriting ShutdownSchedules - Default = "+fmt.Sprint(configuration.ShutdownSchedules)), map[string]string{"module": "controller/AddRepositoryController", "operation": "overwrite/ShutdownSchedules"}, 4)
-			repo.ShutdownSchedules = configuration.ShutdownSchedules
-		}
-		if repo.StartupSchedules == nil {
-			config.Logger.Log(errors.New("Overwriting StartupSchedules - Default = "+fmt.Sprint(configuration.StartupSchedules)), map[string]string{"module": "controller/AddRepositoryController", "operation": "overwrite/StartupSchedules"}, 4)
-			repo.StartupSchedules = configuration.StartupSchedules
-		}
-		if repo.EnvironmentVariables == nil {
-			config.Logger.Log(errors.New("Overwriting EnvironmentVariables - Default = "+fmt.Sprint(configuration.EnvironmentVariables)), map[string]string{"module": "controller/AddRepositoryController", "operation": "overwrite/EnvironmentVariables"}, 4)
-			repo.EnvironmentVariables = configuration.EnvironmentVariables
-		}
-	}
-
-	err = model.AddRepository(repo)
+	err = model.AddRepository(&repo, request.RequestContext.Stage)
 
 	if err != nil {
 		if strings.Contains(err.Error(), "ConditionalCheckFailedException") {
