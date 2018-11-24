@@ -8,7 +8,7 @@ import (
 	"gitlab.com/auto-staging/tower/types"
 )
 
-func GetGlobalRepositoryConfiguration(configuration *types.EnvironmentGeneralConfig, stage string) error {
+func GetGlobalRepositoryConfiguration(configuration *types.GeneralConfig, stage string) error {
 	svc := getDynamoDbClient()
 
 	result, err := svc.GetItem(&dynamodb.GetItemInput{
@@ -30,13 +30,12 @@ func GetGlobalRepositoryConfiguration(configuration *types.EnvironmentGeneralCon
 	return nil
 }
 
-func UpdateGlobalRepositoryConfiguration(configuration *types.EnvironmentGeneralConfig, stage string) error {
+func UpdateGlobalRepositoryConfiguration(configuration *types.GeneralConfig, stage string) error {
 	svc := getDynamoDbClient()
 
-	updateStruct := types.EnvironmentGeneralConfigUpdate{
+	updateStruct := types.GeneralConfigUpdate{
 		ShutdownSchedules:    configuration.ShutdownSchedules,
 		StartupSchedules:     configuration.StartupSchedules,
-		CodeBuildRoleARN:     configuration.CodeBuildRoleARN,
 		EnvironmentVariables: configuration.EnvironmentVariables,
 	}
 

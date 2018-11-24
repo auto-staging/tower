@@ -37,13 +37,13 @@ type RepositoryUpdate struct {
 	EnvironmentVariables  []EnvironmentVariable `json:":environmentVariables"`
 }
 
-type EnvironmentGeneralConfig struct {
+type GeneralConfig struct {
 	ShutdownSchedules    []TimeSchedule        `json:"shutdownSchedules"`
 	StartupSchedules     []TimeSchedule        `json:"startupSchedules"`
 	EnvironmentVariables []EnvironmentVariable `json:"environmentVariables"`
 }
 
-type EnvironmentGeneralConfigUpdate struct {
+type GeneralConfigUpdate struct {
 	ShutdownSchedules    []TimeSchedule        `json:":shutdownSchedules"`
 	StartupSchedules     []TimeSchedule        `json:":startupSchedules"`
 	EnvironmentVariables []EnvironmentVariable `json:":environmentVariables"`

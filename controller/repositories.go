@@ -35,7 +35,7 @@ func AddRepositoryController(request events.APIGatewayProxyRequest) (events.APIG
 	// Overwrite unset values with defaults
 	if repo.ShutdownSchedules == nil || repo.StartupSchedules == nil || repo.EnvironmentVariables == nil || repo.CodeBuildRoleARN == "" {
 		config.Logger.Log(errors.New("Overwriting unset variables with global defaults"), map[string]string{"module": "controller/AddRepositoryController", "operation": "overwrite"}, 4)
-		configuration := types.EnvironmentGeneralConfig{}
+		configuration := types.GeneralConfig{}
 		err = model.GetGlobalRepositoryConfiguration(&configuration, request.RequestContext.Stage)
 		if err != nil {
 			return types.InternalServerErrorResponse, nil
@@ -51,10 +51,6 @@ func AddRepositoryController(request events.APIGatewayProxyRequest) (events.APIG
 		if repo.EnvironmentVariables == nil {
 			config.Logger.Log(errors.New("Overwriting EnvironmentVariables - Default = "+fmt.Sprint(configuration.EnvironmentVariables)), map[string]string{"module": "controller/AddRepositoryController", "operation": "overwrite/EnvironmentVariables"}, 4)
 			repo.EnvironmentVariables = configuration.EnvironmentVariables
-		}
-		if repo.CodeBuildRoleARN == "" {
-			config.Logger.Log(errors.New("Overwriting codeBuildRoleARN - Default = "+fmt.Sprint(configuration.CodeBuildRoleARN)), map[string]string{"module": "controller/AddRepositoryController", "operation": "overwrite/CodeBuildRoleARN"}, 4)
-			repo.CodeBuildRoleARN = configuration.CodeBuildRoleARN
 		}
 	}
 
