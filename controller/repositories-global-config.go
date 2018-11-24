@@ -10,7 +10,7 @@ import (
 )
 
 func GetGlobalRepositoryConfigController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	obj := types.EnvironmentGeneralConfig{}
+	obj := types.GeneralConfig{}
 	err := model.GetGlobalRepositoryConfiguration(&obj, request.RequestContext.Stage)
 	if err != nil {
 		return types.InternalServerErrorResponse, nil
@@ -22,7 +22,7 @@ func GetGlobalRepositoryConfigController(request events.APIGatewayProxyRequest) 
 }
 
 func PutGlobalRepositoryConfigController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	configuration := types.EnvironmentGeneralConfig{}
+	configuration := types.GeneralConfig{}
 	err := json.Unmarshal([]byte(request.Body), &configuration)
 	if err != nil {
 		config.Logger.Log(err, map[string]string{"module": "controller/PutGlobalRepositoryConfigController", "operation": "unmarshal"}, 4)
