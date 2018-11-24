@@ -40,14 +40,12 @@ type RepositoryUpdate struct {
 type EnvironmentGeneralConfig struct {
 	ShutdownSchedules    []TimeSchedule        `json:"shutdownSchedules"`
 	StartupSchedules     []TimeSchedule        `json:"startupSchedules"`
-	CodeBuildRoleARN     string                `json:"codeBuildRoleARN"`
 	EnvironmentVariables []EnvironmentVariable `json:"environmentVariables"`
 }
 
 type EnvironmentGeneralConfigUpdate struct {
 	ShutdownSchedules    []TimeSchedule        `json:":shutdownSchedules"`
 	StartupSchedules     []TimeSchedule        `json:":startupSchedules"`
-	CodeBuildRoleARN     string                `json:":codeBuildRoleARN"`
 	EnvironmentVariables []EnvironmentVariable `json:":environmentVariables"`
 }
 

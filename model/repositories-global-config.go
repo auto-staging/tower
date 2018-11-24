@@ -54,7 +54,7 @@ func UpdateGlobalRepositoryConfiguration(configuration *types.EnvironmentGeneral
 				S: aws.String(stage),
 			},
 		},
-		UpdateExpression:          aws.String("SET shutdownSchedules = :shutdownSchedules, startupSchedules = :startupSchedules, environmentVariables = :environmentVariables, codeBuildRoleARN = :codeBuildRoleARN"),
+		UpdateExpression:          aws.String("SET shutdownSchedules = :shutdownSchedules, startupSchedules = :startupSchedules, environmentVariables = :environmentVariables"),
 		ExpressionAttributeValues: update,
 		ReturnValues:              aws.String("ALL_NEW"),
 	}
