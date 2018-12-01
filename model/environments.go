@@ -182,7 +182,7 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 				S: aws.String(branch),
 			},
 		},
-		UpdateExpression:          aws.String("SET shutdownSchedules = :shutdownSchedules, startupSchedules = :startupSchedules, environmentVariables = :environmentVariables, infrastructureRepoURL = :infrastructureRepoURL"),
+		UpdateExpression:          aws.String("SET shutdownSchedules = :shutdownSchedules, startupSchedules = :startupSchedules, environmentVariables = :environmentVariables, infrastructureRepoURL = :infrastructureRepoURL, codeBuildRoleARN = :codeBuildRoleARN"),
 		ExpressionAttributeValues: update,
 		ConditionExpression:       aws.String("attribute_exists(repository) AND attribute_exists(branch)"),
 		ReturnValues:              aws.String("ALL_NEW"),
