@@ -1,7 +1,7 @@
 package model
 
 import (
-	"fmt"
+	"strconv"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/lambda"
@@ -20,13 +20,16 @@ func TriggerSchedulerLambdaForEnvironment(repository, branch, action string) (st
 	})
 
 	if err != nil {
-		config.Logger.Log(err, map[string]string{"module": "model/TriggerSchedulerLambdaToStartEnvironment", "operation": "scheduler/invoke"}, 0)
+		config.Logger.Log(err, map[string]string{"module": "model/TriggerSchedulerLambdaForEnvironment", "operation": "scheduler/invoke"}, 0)
 		return "", err
 	}
 
-	fmt.Println(response)
-	if *response.StatusCode != 200 {
-		return "{ \"message\": \"scheduler failed, check the scheduler logs for more details\" }", nil
+	output, err := strconv.Unquote(string(response.Payload))
+	config.Logger.Log(err, map[string]string{"module": "model/TriggerSchedulerLambdaForEnvironment", "operation": "strconv/unquote"}, 0)
+
+	if output == "" {
+		return "{ \"message\": \"scheduler failed, check the scheduler logs for more information\" }", nil
 	}
-	return "{ \"message\": \"success\" }", nil
+
+	return output, nil
 }
