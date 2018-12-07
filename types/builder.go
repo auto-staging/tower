@@ -8,4 +8,6 @@ type BuilderEvent struct {
 	CodeBuildRoleARN      string                `json:"codeBuildRoleARN"`
 	EnvironmentVariables  []EnvironmentVariable `json:"environmentVariables"`
 	Success               int                   `json:"success"`
+	ShutdownSchedules     []TimeSchedule        `json:"shutdownSchedules"`
+	StartupSchedules      []TimeSchedule        `json:"startupSchedules"`
 }

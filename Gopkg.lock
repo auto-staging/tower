@@ -9,8 +9,8 @@
     "lambda/messages",
     "lambdacontext"
   ]
-  revision = "fb8f88d824489a878aee1e0badde7d8e129f8767"
-  version = "v1.7.0"
+  revision = "9e3676ee8ca83aee500682f382e10b9d03660093"
+  version = "v1.8.0"
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
@@ -24,6 +24,7 @@
     "aws/credentials",
     "aws/credentials/ec2rolecreds",
     "aws/credentials/endpointcreds",
+    "aws/credentials/processcreds",
     "aws/credentials/stscreds",
     "aws/crr",
     "aws/csm",
@@ -51,8 +52,8 @@
     "service/lambda",
     "service/sts"
   ]
-  revision = "66af558c91f83a793b4a0101f70742062982f611"
-  version = "v1.15.81"
+  revision = "130ebb7dc1d6b5a940198b47642fc8b20936a65d"
+  version = "v1.16.1"
 
 [[projects]]
   name = "github.com/janritter/go-lightning-log"

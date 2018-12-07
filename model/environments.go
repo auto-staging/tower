@@ -128,8 +128,30 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 		return types.Environment{}, err
 	}
 
-	// Invoke Builder Lambda to generate environment
+	// Invoke Builder Lambda to configure schedules
 	event := types.BuilderEvent{
+		Operation:         "UPDATE_SCHEDULE",
+		Branch:            inputEnvironment.Branch,
+		Repository:        inputEnvironment.Repository,
+		ShutdownSchedules: inputEnvironment.ShutdownSchedules,
+		StartupSchedules:  inputEnvironment.StartupSchedules,
+	}
+	body, _ := json.Marshal(event)
+
+	client := getLambdaClient()
+	_, err = client.Invoke(&lambda.InvokeInput{
+		FunctionName:   aws.String("auto-staging-builder"),
+		InvocationType: aws.String("Event"),
+		Payload:        body,
+	})
+
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/AddEnvironmentForRepositroy", "operation": "builder/invokeSchedule"}, 0)
+		return types.Environment{}, err
+	}
+
+	// Invoke Builder Lambda to generate environment
+	event = types.BuilderEvent{
 		Operation:             "CREATE",
 		Branch:                inputEnvironment.Branch,
 		Repository:            inputEnvironment.Repository,
@@ -137,9 +159,8 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 		EnvironmentVariables:  inputEnvironment.EnvironmentVariables,
 		InfrastructureRepoURL: inputEnvironment.InfrastructureRepoURL,
 	}
-	body, _ := json.Marshal(event)
+	body, _ = json.Marshal(event)
 
-	client := getLambdaClient()
 	_, err = client.Invoke(&lambda.InvokeInput{
 		FunctionName:   aws.String("auto-staging-builder"),
 		InvocationType: aws.String("Event"),
@@ -194,8 +215,30 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 		return types.Environment{}, err
 	}
 
-	// Invoke Builder Lambda to update environment
+	// Invoke Builder Lambda to configure schedules
 	event := types.BuilderEvent{
+		Operation:         "UPDATE_SCHEDULE",
+		Branch:            branch,
+		Repository:        name,
+		ShutdownSchedules: environment.ShutdownSchedules,
+		StartupSchedules:  environment.StartupSchedules,
+	}
+	body, _ := json.Marshal(event)
+
+	client := getLambdaClient()
+	_, err = client.Invoke(&lambda.InvokeInput{
+		FunctionName:   aws.String("auto-staging-builder"),
+		InvocationType: aws.String("Event"),
+		Payload:        body,
+	})
+
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/UpdateSingleRepository", "operation": "builder/invokeSchedule"}, 0)
+		return types.Environment{}, err
+	}
+
+	// Invoke Builder Lambda to update environment
+	event = types.BuilderEvent{
 		Operation:             "UPDATE",
 		Branch:                branch,
 		Repository:            name,
@@ -203,9 +246,8 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 		CodeBuildRoleARN:      environment.CodeBuildRoleARN,
 		EnvironmentVariables:  environment.EnvironmentVariables,
 	}
-	body, _ := json.Marshal(event)
+	body, _ = json.Marshal(event)
 
-	client := getLambdaClient()
 	_, err = client.Invoke(&lambda.InvokeInput{
 		FunctionName:   aws.String("auto-staging-builder"),
 		InvocationType: aws.String("Event"),
@@ -224,9 +266,9 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 }
 
 func DeleteSingleEnvironment(environment *types.Environment, name string, branch string) error {
-	// Invoke Builder Lambda to delete environment
+	// Invoke Builder Lambda to delete schedules
 	event := types.BuilderEvent{
-		Operation:  "DELETE",
+		Operation:  "DELETE_SCHEDULE",
 		Branch:     branch,
 		Repository: name,
 	}
@@ -234,6 +276,25 @@ func DeleteSingleEnvironment(environment *types.Environment, name string, branch
 
 	client := getLambdaClient()
 	_, err := client.Invoke(&lambda.InvokeInput{
+		FunctionName:   aws.String("auto-staging-builder"),
+		InvocationType: aws.String("Event"),
+		Payload:        body,
+	})
+
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/DeleteSingleEnvironment", "operation": "builder/invokeSchedule"}, 0)
+		return err
+	}
+
+	// Invoke Builder Lambda to delete environment
+	event = types.BuilderEvent{
+		Operation:  "DELETE",
+		Branch:     branch,
+		Repository: name,
+	}
+	body, _ = json.Marshal(event)
+
+	_, err = client.Invoke(&lambda.InvokeInput{
 		FunctionName:   aws.String("auto-staging-builder"),
 		InvocationType: aws.String("Event"),
 		Payload:        body,
