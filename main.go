@@ -90,6 +90,10 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return controller.GitHubWebhookDeleteController(request)
 	}
 
+	if request.Resource == "/triggers/schedule" && request.HTTPMethod == "POST" {
+		return controller.TriggerEnvironemtStatusChangeController(request)
+	}
+
 	// Default reflector for debugging
 	path, _ := url.PathUnescape(request.Path)
 

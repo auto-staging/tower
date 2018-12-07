@@ -110,6 +110,12 @@ type GitHubWebhook struct {
 	}
 }
 
+type TriggerSchedulePost struct {
+	Branch     string `json:"branch"`
+	Repository string `json:"repository"`
+	Action     string `json:"action"`
+}
+
 type TimeSchedule struct {
 	Cron string `json:"cron"`
 }
