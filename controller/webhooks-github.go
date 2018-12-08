@@ -80,10 +80,6 @@ func GitHubWebhookDeleteController(request events.APIGatewayProxyRequest) (event
 		return types.InternalServerErrorResponse, nil
 	}
 
-	if environment.Repository == "" {
-		return types.NotFoundErrorResponse, nil
-	}
-
 	return events.APIGatewayProxyResponse{Body: "", StatusCode: 204}, nil
 }
 
