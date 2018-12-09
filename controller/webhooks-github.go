@@ -5,11 +5,13 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"os"
 	"regexp"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
+	"gitlab.com/auto-staging/tower/config"
 	"gitlab.com/auto-staging/tower/model"
 	"gitlab.com/auto-staging/tower/types"
 )
@@ -72,6 +74,16 @@ func GitHubWebhookDeleteController(request events.APIGatewayProxyRequest) (event
 	err := json.Unmarshal([]byte(request.Body), &webhook)
 	if err != nil || webhook.RefType != "branch" {
 		return types.InvalidRequestBodyResponse, nil
+	}
+
+	status := types.EnvironmentStatus{}
+	err = model.GetSingleEnvironmentStatusInformation(&status, webhook.Repository.Name, webhook.Ref)
+	if err != nil {
+		return types.InternalServerErrorResponse, nil
+	}
+	if status.Status != "running" && status.Status != "stopped" && status.Status != "initiating failed" && status.Status != "destroying failed" {
+		config.Logger.Log(errors.New("Can't delete environment in status = "+status.Status), map[string]string{"module": "controller/GitHubWebhookDeleteController", "operation": "statusCheck"}, 0)
+		return types.InvalidEnvironmentStatusResponse, nil
 	}
 
 	environment := types.Environment{}
