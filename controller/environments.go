@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"errors"
 	"net/url"
 	"strings"
 
@@ -71,9 +72,20 @@ func GetSingleEnvironmentForRepository(request events.APIGatewayProxyRequest) (e
 }
 
 func PutSinglEnvironmentForRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	environment := types.EnvironmentPut{}
+	status := types.EnvironmentStatus{}
 	branch, _ := url.PathUnescape(request.PathParameters["branch"])
-	err := json.Unmarshal([]byte(request.Body), &environment)
+	err := model.GetSingleEnvironmentStatusInformation(&status, request.PathParameters["name"], branch)
+	if err != nil {
+		return types.InternalServerErrorResponse, nil
+	}
+
+	if status.Status != "running" && status.Status != "stopped" {
+		config.Logger.Log(errors.New("Can't update environment in status = "+status.Status), map[string]string{"module": "controller/PutSinglEnvironmentForRepositoryController", "operation": "statusCheck"}, 0)
+		return types.InvalidEnvironmentStatusResponse, nil
+	}
+
+	environment := types.EnvironmentPut{}
+	err = json.Unmarshal([]byte(request.Body), &environment)
 	if err != nil {
 		config.Logger.Log(err, map[string]string{"module": "controller/PutSinglEnvironmentForRepositoryController", "operation": "unmarshal"}, 4)
 		return types.InvalidRequestBodyResponse, nil

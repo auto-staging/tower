@@ -130,6 +130,11 @@ var InvalidRequestBodyResponse = events.APIGatewayProxyResponse{
 	StatusCode: 400,
 }
 
+var InvalidEnvironmentStatusResponse = events.APIGatewayProxyResponse{
+	Body:       "{\"message\": \"Can't execute operation in current environment status\"}",
+	StatusCode: 400,
+}
+
 var NotFoundErrorResponse = events.APIGatewayProxyResponse{
 	Body:       "{\"message\": \"Not found\"}",
 	StatusCode: 404,
