@@ -29,6 +29,10 @@ func AddRepositoryController(request events.APIGatewayProxyRequest) (events.APIG
 	if err != nil {
 		return types.InvalidRequestBodyResponse, nil
 	}
+	if !validateIAMRoleARN(repo.CodeBuildRoleARN) {
+		config.Logger.Log(err, map[string]string{"module": "controller/AddRepositoryController", "operation": "validateCodeBuildRoleARN"}, 1)
+		return events.APIGatewayProxyResponse{Body: "{ \"message\" : \"codeBuildRoleARN is not a valid IAM Role ARN\" }", StatusCode: 400}, nil
+	}
 
 	err = model.AddRepository(&repo, request.RequestContext.Stage)
 
@@ -66,6 +70,10 @@ func PutSingleRepositoryController(request events.APIGatewayProxyRequest) (event
 	if err != nil {
 		config.Logger.Log(err, map[string]string{"module": "controller/PutSingleRepositoryController", "operation": "unmarshal"}, 4)
 		return types.InvalidRequestBodyResponse, nil
+	}
+	if !validateIAMRoleARN(repository.CodeBuildRoleARN) {
+		config.Logger.Log(err, map[string]string{"module": "controller/PutSingleRepositoryController", "operation": "validateCodeBuildRoleARN"}, 1)
+		return events.APIGatewayProxyResponse{Body: "{ \"message\" : \"codeBuildRoleARN is not a valid IAM Role ARN\" }", StatusCode: 400}, nil
 	}
 
 	err = model.UpdateSingleRepository(&repository, request.PathParameters["name"])
