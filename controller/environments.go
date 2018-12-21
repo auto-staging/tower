@@ -79,7 +79,7 @@ func PutSinglEnvironmentForRepositoryController(request events.APIGatewayProxyRe
 		return types.InternalServerErrorResponse, nil
 	}
 
-	if status.Status != "running" && status.Status != "stopped" && status.Status != "updating failed" {
+	if status.Status != "running" && status.Status != "updating failed" {
 		config.Logger.Log(errors.New("Can't update environment in status = "+status.Status), map[string]string{"module": "controller/PutSinglEnvironmentForRepositoryController", "operation": "statusCheck"}, 0)
 		return types.InvalidEnvironmentStatusResponse, nil
 	}
