@@ -90,6 +90,10 @@ func PutSinglEnvironmentForRepositoryController(request events.APIGatewayProxyRe
 		config.Logger.Log(err, map[string]string{"module": "controller/PutSinglEnvironmentForRepositoryController", "operation": "unmarshal"}, 4)
 		return types.InvalidRequestBodyResponse, nil
 	}
+	if !validateIAMRoleARN(environment.CodeBuildRoleARN) {
+		config.Logger.Log(err, map[string]string{"module": "controller/PutSinglEnvironmentForRepositoryController", "operation": "validateCodeBuildRoleARN"}, 1)
+		return events.APIGatewayProxyResponse{Body: "{ \"message\" : \"codeBuildRoleARN is not a valid IAM Role ARN\" }", StatusCode: 400}, nil
+	}
 
 	result, err := model.UpdateEnvironment(&environment, request.PathParameters["name"], branch)
 
