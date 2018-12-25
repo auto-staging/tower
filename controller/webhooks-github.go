@@ -16,11 +16,16 @@ import (
 	"gitlab.com/auto-staging/tower/types"
 )
 
+// GitHubWebhookPingController is the controller function for the POST /webhooks/github endpoint with X-GitHub-Event = ping.
+// GitHub sends the ping event after the Webhook was succesfully added to GitHub.
+// The GitHub Webhook endpoint is secured through HMAC.
 func GitHubWebhookPingController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-
 	return events.APIGatewayProxyResponse{Body: "{\"message\": \"Pong\"}", StatusCode: 200}, nil
 }
 
+// GitHubWebhookCreateController is the controller function for the POST /webhooks/github endpoint with X-GitHub-Event = create.
+// GitHub sends the create event after a new Git branch was created.
+// The GitHub Webhook endpoint is secured through HMAC.
 func GitHubWebhookCreateController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	if !verifyHMAC(request.Body, request.Headers["X-Hub-Signature"]) {
 		return events.APIGatewayProxyResponse{Body: "{ \"message\" : \"HMAC validation failed\" }", StatusCode: 400}, nil
@@ -65,6 +70,9 @@ func GitHubWebhookCreateController(request events.APIGatewayProxyRequest) (event
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 201}, nil
 }
 
+// GitHubWebhookDeleteController is the controller function for the POST /webhooks/github endpoint with X-GitHub-Event = delete.
+// GitHub sends the delete event after a Git branch was deleted.
+// The GitHub Webhook endpoint is secured through HMAC.
 func GitHubWebhookDeleteController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	if !verifyHMAC(request.Body, request.Headers["X-Hub-Signature"]) {
 		return events.APIGatewayProxyResponse{Body: "{ \"message\" : \"HMAC validation failed\" }", StatusCode: 400}, nil
