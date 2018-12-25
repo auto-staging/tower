@@ -11,6 +11,8 @@ import (
 	"gitlab.com/auto-staging/tower/types"
 )
 
+// TriggerEnvironemtStatusChangeController is the controller function for the POST /triggers/schedule endpoint.
+// The request body containing the desired status for the Environment gets read from the APIGatewayProxyRequest struct
 func TriggerEnvironemtStatusChangeController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	trigger := types.TriggerSchedulePost{}
 	err := json.Unmarshal([]byte(request.Body), &trigger)
