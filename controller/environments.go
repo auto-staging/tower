@@ -12,6 +12,8 @@ import (
 	"gitlab.com/auto-staging/tower/types"
 )
 
+// GetAllEnvironmentsForRepositoryController is the controller function for the GET /repositories/{name}/environments endpoint.
+// The "name" path parameter containing the Repository name gets read from the APIGatewayProxyRequest struct
 func GetAllEnvironmentsForRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	obj := []types.Environment{}
 	err := model.GetAllEnvironmentsForRepository(&obj, request.PathParameters["name"])
@@ -24,6 +26,8 @@ func GetAllEnvironmentsForRepositoryController(request events.APIGatewayProxyReq
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
 
+// AddEnvironmentForRepositoryController is the controller function for the POST /repositories/{name}/environments endpoint.
+// The "name" path parameter containing the Repository name and the request body containing the information for the new Environment gets read from the APIGatewayProxyRequest struct
 func AddEnvironmentForRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	env := types.EnvironmentPost{}
 	err := json.Unmarshal([]byte(request.Body), &env)
@@ -54,7 +58,10 @@ func AddEnvironmentForRepositoryController(request events.APIGatewayProxyRequest
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 201}, nil
 }
 
+// GetSingleEnvironmentForRepository is the controller function for the GET /repositories/{name}/environments/{branch} endpoint.
+// The "name" path parameter containing the Repository name and the "branch" path parameter containing the branch name gets read from the APIGatewayProxyRequest struct
 func GetSingleEnvironmentForRepository(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	// TODO Add missing Controller to function name
 	obj := types.Environment{}
 	branch, _ := url.PathUnescape(request.PathParameters["branch"])
 	err := model.GetSingleEnvironmentForRepository(&obj, request.PathParameters["name"], branch)
@@ -71,6 +78,9 @@ func GetSingleEnvironmentForRepository(request events.APIGatewayProxyRequest) (e
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
 
+// PutSinglEnvironmentForRepositoryController is the controller function for the PUT /repositories/{name}/environments/{branch} endpoint.
+// The "name" path parameter containing the Repository name, the "branch" path parameter containing the branch name
+// and the request body containing the updated information for the Environment gets read from the APIGatewayProxyRequest struct
 func PutSinglEnvironmentForRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	status := types.EnvironmentStatus{}
 	branch, _ := url.PathUnescape(request.PathParameters["branch"])
@@ -108,6 +118,8 @@ func PutSinglEnvironmentForRepositoryController(request events.APIGatewayProxyRe
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
 
+// DeleteSingleEnvironmentController is the controller function for the DELETE /repositories/{name}/environments/{branch} endpoint.
+// The "name" path parameter containing the Repository name and the "branch" path parameter containing the branch name gets read from the APIGatewayProxyRequest struct
 func DeleteSingleEnvironmentController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	status := types.EnvironmentStatus{}
 	branch, _ := url.PathUnescape(request.PathParameters["branch"])
