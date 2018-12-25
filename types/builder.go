@@ -1,5 +1,6 @@
 package types
 
+// BuilderEvent struct contains all values for the different Builder invoke bodys combined into one struct.
 type BuilderEvent struct {
 	Repository            string                `json:"repository"`
 	Branch                string                `json:"branch"`
