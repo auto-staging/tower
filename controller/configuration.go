@@ -8,6 +8,7 @@ import (
 	"gitlab.com/auto-staging/tower/types"
 )
 
+// GetConfigurationController is the controller function for the GET /configuration endpoint.
 func GetConfigurationController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	obj := types.TowerConfiguration{}
 	err := model.GetConfiguration(&obj)
@@ -20,6 +21,8 @@ func GetConfigurationController(request events.APIGatewayProxyRequest) (events.A
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
 
+// PutConfigurationController is the controller function for the PUT /configuration endpoint.
+// The request body with the update information gets read from the APIGatewayProxyRequest struct.
 func PutConfigurationController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	config := types.TowerConfiguration{}
 	err := json.Unmarshal([]byte(request.Body), &config)
