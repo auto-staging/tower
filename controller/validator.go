@@ -4,6 +4,5 @@ import "regexp"
 
 func validateIAMRoleARN(arn string) bool {
 	regex := regexp.MustCompile(`arn:aws:iam::\d{12}:role/?[a-zA-Z_0-9+=,.@\-_/]+`)
-	matches := regex.MatchString(arn)
-	return matches
+	return regex.MatchString(arn)
 }
