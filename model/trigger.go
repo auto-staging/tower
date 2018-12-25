@@ -8,6 +8,10 @@ import (
 	"gitlab.com/auto-staging/tower/config"
 )
 
+// TriggerSchedulerLambdaForEnvironment invokes the Scheduler Lambda Function with the repository, branch and action given in the parameters, action
+// can be start or stop.
+// If invoking the Scheduler fails the error gets logged and then returned. Otherwise the response message of the Scheduler
+// gets unquoted and returned.
 func TriggerSchedulerLambdaForEnvironment(repository, branch, action string) (string, error) {
 	body := []byte("{ \"repository\": \"" + repository + "\", \"branch\": \"" + branch + "\", \"action\": \"" + action + "\" }")
 
