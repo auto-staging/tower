@@ -10,6 +10,7 @@ import (
 	"gitlab.com/auto-staging/tower/types"
 )
 
+// GetAllRepositoriesController is the controller function for the GET /repositories endpoint.
 func GetAllRepositoriesController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	obj := []types.Repository{}
@@ -23,6 +24,8 @@ func GetAllRepositoriesController(request events.APIGatewayProxyRequest) (events
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
 
+// AddRepositoryController is the controller function for the POST /repositories endpoint.
+// The request body with the information for the new Repository gets read from the APIGatewayProxyRequest struct.
 func AddRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	repo := types.Repository{}
 	err := json.Unmarshal([]byte(request.Body), &repo)
@@ -48,6 +51,8 @@ func AddRepositoryController(request events.APIGatewayProxyRequest) (events.APIG
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 201}, nil
 }
 
+// GetSingleRepositoryController is the controller function for the GET /repositories/{name} endpoint.
+// The "name" path parameter gets read from the APIGatewayProxyRequest struct.
 func GetSingleRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	obj := types.Repository{}
 	err := model.GetSingleRepository(&obj, request.PathParameters["name"])
@@ -64,6 +69,8 @@ func GetSingleRepositoryController(request events.APIGatewayProxyRequest) (event
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
 
+// PutSingleRepositoryController is the controller function for the PUT /repositories/{name} endpoint.
+// The request body containing the information for the new Repository gets read from the APIGatewayProxyRequest struct
 func PutSingleRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	repository := types.Repository{}
 	err := json.Unmarshal([]byte(request.Body), &repository)
@@ -89,6 +96,8 @@ func PutSingleRepositoryController(request events.APIGatewayProxyRequest) (event
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
 
+// DeleteSingleRepositoryController is the controller function for the DELETE /repositories/{name} endpoint.
+// The "name" path parameter gets read from the APIGatewayProxyRequest struct.
 func DeleteSingleRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	exist, err := model.CheckIfEnvironmentsForRepositoryExist(request.PathParameters["name"])
