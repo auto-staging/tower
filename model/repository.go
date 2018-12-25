@@ -11,6 +11,8 @@ import (
 	"gitlab.com/auto-staging/tower/types"
 )
 
+// GetAllRepositories reads all Repositories from the DynamoDB Table and unmarshals them into the array of Repository structs from the parameters (call by reference).
+// If an error occurs the error gets logged and then returned.
 func GetAllRepositories(repositories *[]types.Repository) error {
 	svc := getDynamoDbClient()
 
@@ -23,11 +25,18 @@ func GetAllRepositories(repositories *[]types.Repository) error {
 		return err
 	}
 
-	dynamodbattribute.UnmarshalListOfMaps(result.Items, repositories)
+	err = dynamodbattribute.UnmarshalListOfMaps(result.Items, repositories)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/GetAllRepositories", "operation": "dynamodb/unmarshalListOfMaps"}, 0)
+		return err
+	}
 
 	return nil
 }
 
+// GetSingleRepository reads a single Repository entry from the DynamoDB Table where repository matches the namen given in the parameters.
+// The response gets unmarshaled into the Repository struct from the parameters (call by reference).
+// If an error occurs the error gets logged and then returned.
 func GetSingleRepository(repository *types.Repository, name string) error {
 	svc := getDynamoDbClient()
 
@@ -45,11 +54,19 @@ func GetSingleRepository(repository *types.Repository, name string) error {
 		return err
 	}
 
-	dynamodbattribute.UnmarshalMap(result.Item, repository)
+	err = dynamodbattribute.UnmarshalMap(result.Item, repository)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/GetSingleRepository", "operation": "dynamodb/unmarshalListOfMaps"}, 0)
+		return err
+	}
 
 	return nil
 }
 
+// AddRepository adds a new Repository to the DynamoDB Table, the values are received from the Repository struct given in the parameters.
+// Some values are overwritten with the global defaults if they were not set, therefore the API Stage is also required since AddRepository calls GetGlobalRepositoryConfiguration
+// internaly. To check the stored values, all values in the Repository struct are overwritten with the response of the AWS SDK command (call by reference).
+// If an error occurs the error gets logged and then returned.
 func AddRepository(repository *types.Repository, stage string) error {
 	svc := getDynamoDbClient()
 
@@ -76,6 +93,10 @@ func AddRepository(repository *types.Repository, stage string) error {
 	}
 
 	av, err := dynamodbattribute.MarshalMap(repository)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/AddRepository", "operation": "dynamodb/marshalMap"}, 0)
+		return err
+	}
 
 	input := &dynamodb.PutItemInput{
 		TableName:           aws.String("auto-staging-repositories"),
@@ -93,6 +114,9 @@ func AddRepository(repository *types.Repository, stage string) error {
 	return nil
 }
 
+// UpdateSingleRepository updates an existing Repository in DynamoDB where repository matches the given name with the values from the Repository struct
+// in the parameters. To check the updated values, all values in the Repository struct are overwritten with the response of the AWS SDK command (call by reference).
+// If an error occurs the error gets logged and then returned.
 func UpdateSingleRepository(repository *types.Repository, name string) error {
 	svc := getDynamoDbClient()
 
@@ -132,11 +156,18 @@ func UpdateSingleRepository(repository *types.Repository, name string) error {
 		return err
 	}
 
-	dynamodbattribute.UnmarshalMap(result.Attributes, repository)
+	err = dynamodbattribute.UnmarshalMap(result.Attributes, repository)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/UpdateSingleRepository", "operation": "dynamodb/unmarshalMap"}, 0)
+		return err
+	}
 
 	return nil
 }
 
+// DeleteSingleRepository deletes an existing Repository in DynamoDB where repository matches the given name from the parameters.
+// To check the deleted repository, all values in the Repository struct are overwritten with the response of the AWS SDK command (call by reference).
+// If an error occurs the error gets logged and then returned.
 func DeleteSingleRepository(repository *types.Repository, name string) error {
 	svc := getDynamoDbClient()
 
@@ -155,7 +186,11 @@ func DeleteSingleRepository(repository *types.Repository, name string) error {
 		return err
 	}
 
-	dynamodbattribute.UnmarshalMap(result.Attributes, repository)
+	err = dynamodbattribute.UnmarshalMap(result.Attributes, repository)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/DeleteSingleRepository", "operation": "dynamodb/unmarshalMap"}, 0)
+		return err
+	}
 
 	return nil
 }
