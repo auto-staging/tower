@@ -8,6 +8,10 @@ import (
 	"gitlab.com/auto-staging/tower/types"
 )
 
+// GetGlobalRepositoryConfiguration reads the current global repository configuration from the DynamoDB Table and unmarshals it to the
+// GeneralConfig struct from the parameters (call by refernce).
+// Next to the GeneralConfig struct, the stage parameter which is used as Key in DynamoDB and contains the API stage is required.
+// If an errors occurs the error gets logged and then returned.
 func GetGlobalRepositoryConfiguration(configuration *types.GeneralConfig, stage string) error {
 	svc := getDynamoDbClient()
 
@@ -25,11 +29,19 @@ func GetGlobalRepositoryConfiguration(configuration *types.GeneralConfig, stage 
 		return err
 	}
 
-	dynamodbattribute.UnmarshalMap(result.Item, configuration)
+	err = dynamodbattribute.UnmarshalMap(result.Item, configuration)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/GetGlobalRepositoryConfiguration", "operation": "dynamodb/unmarshalMap"}, 0)
+		return err
+	}
 
 	return nil
 }
 
+// UpdateGlobalRepositoryConfiguration updates the global repository configuration in DynamoDB by using the AWS SDK with the values
+// from the GeneralConfig struct in the parameters, after the update all values in the GeneralConfig struct are overwritten with the AWS command results.
+// Next to the GeneralConfig struct, the stage parameter which is used as Key in DynamoDB and contains the API stage is required.
+// If an errors occurs the error gets logged and then returned.
 func UpdateGlobalRepositoryConfiguration(configuration *types.GeneralConfig, stage string) error {
 	svc := getDynamoDbClient()
 
@@ -64,7 +76,11 @@ func UpdateGlobalRepositoryConfiguration(configuration *types.GeneralConfig, sta
 		return err
 	}
 
-	dynamodbattribute.UnmarshalMap(result.Attributes, configuration)
+	err = dynamodbattribute.UnmarshalMap(result.Attributes, configuration)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/GetGlobalRepositoryConfiguration", "operation": "dynamodb/unmarshalMap"}, 0)
+		return err
+	}
 
 	return nil
 }
