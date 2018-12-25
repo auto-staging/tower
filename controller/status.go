@@ -9,6 +9,7 @@ import (
 	"gitlab.com/auto-staging/tower/types"
 )
 
+// GetAllEnvironmentsStatusInformationController is the controller function for the GET /repositories/environments/status endpoint.
 func GetAllEnvironmentsStatusInformationController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	obj := []types.EnvironmentStatus{}
 	err := model.GetAllEnvironmentsStatusInformation(&obj)
@@ -21,6 +22,8 @@ func GetAllEnvironmentsStatusInformationController(request events.APIGatewayProx
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
 
+// GetSingleEnvironmentStatusInformationController is the controller function for the GET /repositories/{name}/environments/{branch}/status endpoint.
+// The "name" path parameter containing the Repository name and the "branch" path parameter containing the branch name gets read from the APIGatewayProxyRequest struct
 func GetSingleEnvironmentStatusInformationController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	obj := types.EnvironmentStatus{}
 	branch, _ := url.PathUnescape(request.PathParameters["branch"])
