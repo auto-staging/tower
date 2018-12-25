@@ -12,6 +12,9 @@ import (
 	"gitlab.com/auto-staging/tower/types"
 )
 
+// Handler is the main function called by lambda.Start, it redirects the request to the matching controller by resource and http method.
+// Since the Lambda function is called through API Gateway it uses APIGatewayProxyRequest as parameter
+// to get information about the request (containing ressource, method and much more) and APIGatewayProxyResponse as return value (including http code and response message)
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	if request.Resource == "/configuration" && request.HTTPMethod == "GET" {
