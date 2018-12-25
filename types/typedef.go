@@ -1,8 +1,6 @@
 package types
 
 import (
-	"encoding/json"
-
 	"github.com/aws/aws-lambda-go/events"
 )
 
@@ -90,16 +88,6 @@ type EnvironmentStatus struct {
 	Repository string `json:"repository,omitempty"`
 	Branch     string `json:"branch,omitempty"`
 	Status     string `json:"status,omitempty"`
-}
-
-type Reflector struct {
-	Method     string
-	Resource   string
-	Path       string
-	PathParams map[string]string
-	Stage      string
-	Body       map[string]*json.RawMessage
-	Headers    map[string]string
 }
 
 type GitHubWebhook struct {

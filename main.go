@@ -1,15 +1,10 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"net/url"
-
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"gitlab.com/auto-staging/tower/config"
 	"gitlab.com/auto-staging/tower/controller"
-	"gitlab.com/auto-staging/tower/types"
 )
 
 // Handler is the main function called by lambda.Start, it redirects the request to the matching controller by resource and http method.
@@ -97,32 +92,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return controller.TriggerEnvironemtStatusChangeController(request)
 	}
 
-	// Default reflector for debugging
-	path, _ := url.PathUnescape(request.Path)
-
-	for k := range request.PathParameters {
-		unescaped, _ := url.PathUnescape(request.PathParameters[k])
-		request.PathParameters[k] = unescaped
-	}
-
-	fmt.Println(request)
-
-	var objmap map[string]*json.RawMessage
-	json.Unmarshal([]byte(request.Body), &objmap)
-
-	response := &types.Reflector{
-		Method:     request.HTTPMethod,
-		Resource:   request.Resource,
-		Path:       path,
-		PathParams: request.PathParameters,
-		Stage:      request.RequestContext.Stage,
-		Body:       objmap,
-		Headers:    request.Headers,
-	}
-
-	body, _ := json.Marshal(response)
-
-	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
+	return events.APIGatewayProxyResponse{Body: "{ \"message\" : \"No controller for requested resource and method found\" }", StatusCode: 400}, nil
 }
 
 func main() {
