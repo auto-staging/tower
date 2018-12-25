@@ -8,6 +8,9 @@ import (
 	"gitlab.com/auto-staging/tower/types"
 )
 
+// GetAllEnvironmentsStatusInformation reads the repository, branch and status columns from all rows of the environments DynamoDB Table and writes
+// them to the Array of EnvironmentStatus structs given in the parameters (call by reference).
+// If an error occurs the error gets logged and then returned.
 func GetAllEnvironmentsStatusInformation(status *[]types.EnvironmentStatus) error {
 	svc := getDynamoDbClient()
 
@@ -24,11 +27,18 @@ func GetAllEnvironmentsStatusInformation(status *[]types.EnvironmentStatus) erro
 		return err
 	}
 
-	dynamodbattribute.UnmarshalListOfMaps(result.Items, status)
+	err = dynamodbattribute.UnmarshalListOfMaps(result.Items, status)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/GetAllEnvironmentsStatusInformation", "operation": "dynamodb/unmarshalListOfMaps"}, 0)
+		return err
+	}
 
 	return nil
 }
 
+// GetSingleEnvironmentStatusInformation reads the repository, branch and status columns from the row of the environments DynamoDB Table where
+// repository and branch match the values given in the parameters. The result is written to the EnvironmentStatus struct from the parameters (call by reference).
+// If an error occurs the error gets logged and then returned.
 func GetSingleEnvironmentStatusInformation(status *types.EnvironmentStatus, name string, branch string) error {
 	svc := getDynamoDbClient()
 
@@ -53,7 +63,11 @@ func GetSingleEnvironmentStatusInformation(status *types.EnvironmentStatus, name
 		return err
 	}
 
-	dynamodbattribute.UnmarshalMap(result.Item, status)
+	err = dynamodbattribute.UnmarshalMap(result.Item, status)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/GetSingleEnvironmentStatusInformation", "operation": "dynamodb/unmarshalListOfMaps"}, 0)
+		return err
+	}
 
 	return nil
 }
