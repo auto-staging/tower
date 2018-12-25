@@ -58,10 +58,9 @@ func AddEnvironmentForRepositoryController(request events.APIGatewayProxyRequest
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 201}, nil
 }
 
-// GetSingleEnvironmentForRepository is the controller function for the GET /repositories/{name}/environments/{branch} endpoint.
+// GetSingleEnvironmentForRepositoryController is the controller function for the GET /repositories/{name}/environments/{branch} endpoint.
 // The "name" path parameter containing the Repository name and the "branch" path parameter containing the branch name gets read from the APIGatewayProxyRequest struct
-func GetSingleEnvironmentForRepository(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	// TODO Add missing Controller to function name
+func GetSingleEnvironmentForRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	obj := types.Environment{}
 	branch, _ := url.PathUnescape(request.PathParameters["branch"])
 	err := model.GetSingleEnvironmentForRepository(&obj, request.PathParameters["name"], branch)
