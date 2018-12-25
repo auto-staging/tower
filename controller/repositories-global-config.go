@@ -9,6 +9,7 @@ import (
 	"gitlab.com/auto-staging/tower/types"
 )
 
+// GetGlobalRepositoryConfigController is the controller function for the GET /repositories/environments endpoint.
 func GetGlobalRepositoryConfigController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	obj := types.GeneralConfig{}
 	err := model.GetGlobalRepositoryConfiguration(&obj, request.RequestContext.Stage)
@@ -21,6 +22,8 @@ func GetGlobalRepositoryConfigController(request events.APIGatewayProxyRequest) 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
 
+// PutGlobalRepositoryConfigController is the controller function for the PUT /repositories/environments endpoint.
+// The request body with the updates information gets read from the APIGatewayProxyRequest struct.
 func PutGlobalRepositoryConfigController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	configuration := types.GeneralConfig{}
 	err := json.Unmarshal([]byte(request.Body), &configuration)
