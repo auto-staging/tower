@@ -15,7 +15,7 @@ import (
 // GetAllEnvironmentsForRepositoryController is the controller function for the GET /repositories/{name}/environments endpoint.
 // The "name" path parameter containing the Repository name gets read from the APIGatewayProxyRequest struct
 func GetAllEnvironmentsForRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	obj := []types.Environment{}
+	var obj []types.Environment
 	err := model.GetAllEnvironmentsForRepository(&obj, request.PathParameters["name"])
 	if err != nil {
 		return types.InternalServerErrorResponse, nil

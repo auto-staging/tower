@@ -358,7 +358,7 @@ func CheckIfEnvironmentsForRepositoryExist(name string) (bool, error) {
 		return false, err
 	}
 
-	environments := []types.Environment{}
+	var environments []types.Environment
 	err = dynamodbattribute.UnmarshalListOfMaps(result.Items, &environments)
 	if err != nil {
 		config.Logger.Log(err, map[string]string{"module": "model/CheckIfEnvironmentsForRepositoryExist", "operation": "dynamodb/unmarshalListOfMaps"}, 0)

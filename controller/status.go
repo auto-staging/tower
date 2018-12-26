@@ -11,7 +11,7 @@ import (
 
 // GetAllEnvironmentsStatusInformationController is the controller function for the GET /repositories/environments/status endpoint.
 func GetAllEnvironmentsStatusInformationController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	obj := []types.EnvironmentStatus{}
+	var obj []types.EnvironmentStatus
 	err := model.GetAllEnvironmentsStatusInformation(&obj)
 	if err != nil {
 		return types.InternalServerErrorResponse, nil

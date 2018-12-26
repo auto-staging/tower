@@ -13,7 +13,7 @@ import (
 // GetAllRepositoriesController is the controller function for the GET /repositories endpoint.
 func GetAllRepositoriesController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	obj := []types.Repository{}
+	var obj []types.Repository
 	err := model.GetAllRepositories(&obj)
 	if err != nil {
 		return types.InternalServerErrorResponse, nil
