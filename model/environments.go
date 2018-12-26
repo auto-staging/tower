@@ -15,6 +15,9 @@ import (
 	"gitlab.com/auto-staging/tower/types"
 )
 
+// GetAllEnvironmentsForRepository gets all Environments where the repository matches name (parameter) from DynamoDB, the received Environments are unmarshaled into
+// the array of Environments given in the parameters (call by reference).
+// If an error occurs the error gets logged and then returned.
 func GetAllEnvironmentsForRepository(environments *[]types.Environment, name string) error {
 	svc := getDynamoDbClient()
 
@@ -36,11 +39,18 @@ func GetAllEnvironmentsForRepository(environments *[]types.Environment, name str
 		return err
 	}
 
-	dynamodbattribute.UnmarshalListOfMaps(result.Items, environments)
+	err = dynamodbattribute.UnmarshalListOfMaps(result.Items, environments)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/GetAllEnvironmentsForRepository", "operation": "dynamodb/unmarshalListOfMaps"}, 0)
+		return err
+	}
 
 	return nil
 }
 
+// GetSingleEnvironmentForRepository gets the Environment where repository equals name and branch equals branch from DynamoDB,
+// the received Environment gets unmarshaled into the Environment struct given in the parameters (call by reference).
+// If an error occurs the error gets logged and then returned.
 func GetSingleEnvironmentForRepository(environment *types.Environment, name string, branch string) error {
 	svc := getDynamoDbClient()
 
@@ -61,11 +71,20 @@ func GetSingleEnvironmentForRepository(environment *types.Environment, name stri
 		return err
 	}
 
-	dynamodbattribute.UnmarshalMap(result.Item, environment)
+	err = dynamodbattribute.UnmarshalMap(result.Item, environment)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/GetSingleEnvironmentForRepository", "operation": "dynamodb/unmarshalMap"}, 0)
+		return err
+	}
 
 	return nil
 }
 
+// AddEnvironmentForRepository adds a new Environment for the repository given in the parameters, the values for the new Environment are
+// in the EnvironmentPost struct.
+// If some values are unset, they will be set with the defaults from the repository.
+// After successfully adding the new Environment to DynamoDB, the Builder Lambda gets invoked to add the Schedules and the CodeBuild Job.
+// If an error occurs the error gets logged and then returned. If no error occurs the newly created Environment gets returned.
 func AddEnvironmentForRepository(environment types.EnvironmentPost, name string) (types.Environment, error) {
 	svc := getDynamoDbClient()
 
@@ -114,6 +133,10 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 	}
 
 	av, err := dynamodbattribute.MarshalMap(inputEnvironment)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/AddEnvironmentForRepositroy", "operation": "dynamodb/marshalMap"}, 0)
+		return types.Environment{}, err
+	}
 
 	input := &dynamodb.PutItemInput{
 		TableName:           aws.String("auto-staging-environments"),
@@ -175,6 +198,10 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 	return inputEnvironment, nil
 }
 
+// UpdateEnvironment updates an existing Environment in DynamoDB where repository equals name and branch equals branch, the updated values for the
+// Environment are in the EnvironmentPut struct.
+// After successfully updating the Environment in DynamoDB, the Builder Lambda gets invoked to update the Schedules and the CodeBuild Job.
+// If an error occurs the error gets logged and then returned. If no error occurs the updated Environment gets returned.
 func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch string) (types.Environment, error) {
 	svc := getDynamoDbClient()
 
@@ -265,6 +292,8 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 	return response, nil
 }
 
+// DeleteSingleEnvironment invokes the Builder Lambda to delete the schedules and the CodeBuild Job with the infrastructure.
+// If an error occurs the error gets logged and then returned.
 func DeleteSingleEnvironment(environment *types.Environment, name string, branch string) error {
 	// Invoke Builder Lambda to delete schedules
 	event := types.BuilderEvent{
@@ -308,6 +337,9 @@ func DeleteSingleEnvironment(environment *types.Environment, name string, branch
 	return nil
 }
 
+// CheckIfEnvironmentsForRepositoryExist checks if Environments in DynamoDB exist where repository equals name from the parameters. If Environments
+// were found then true gets returned, otherwise false.
+// If an error occurs the error gets logged and then returned.
 func CheckIfEnvironmentsForRepositoryExist(name string) (bool, error) {
 	svc := getDynamoDbClient()
 
@@ -327,7 +359,11 @@ func CheckIfEnvironmentsForRepositoryExist(name string) (bool, error) {
 	}
 
 	environments := []types.Environment{}
-	dynamodbattribute.UnmarshalListOfMaps(result.Items, &environments)
+	err = dynamodbattribute.UnmarshalListOfMaps(result.Items, &environments)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/CheckIfEnvironmentsForRepositoryExist", "operation": "dynamodb/unmarshalListOfMaps"}, 0)
+		return false, err
+	}
 
 	if len(environments) > 0 {
 		return true, nil
