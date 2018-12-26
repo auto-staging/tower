@@ -136,8 +136,7 @@ func DeleteSingleEnvironmentController(request events.APIGatewayProxyRequest) (e
 		return types.InvalidEnvironmentStatusResponse, nil
 	}
 
-	env := types.Environment{}
-	err = model.DeleteSingleEnvironment(&env, request.PathParameters["name"], branch)
+	err = model.DeleteSingleEnvironment(request.PathParameters["name"], branch)
 	if err != nil {
 		return types.InternalServerErrorResponse, nil
 	}

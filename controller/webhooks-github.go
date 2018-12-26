@@ -94,8 +94,7 @@ func GitHubWebhookDeleteController(request events.APIGatewayProxyRequest) (event
 		return types.InvalidEnvironmentStatusResponse, nil
 	}
 
-	environment := types.Environment{}
-	err = model.DeleteSingleEnvironment(&environment, webhook.Repository.Name, webhook.Ref)
+	err = model.DeleteSingleEnvironment(webhook.Repository.Name, webhook.Ref)
 	if err != nil {
 		return types.InternalServerErrorResponse, nil
 	}

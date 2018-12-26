@@ -294,7 +294,7 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 
 // DeleteSingleEnvironment invokes the Builder Lambda to delete the schedules and the CodeBuild Job with the infrastructure.
 // If an error occurs the error gets logged and then returned.
-func DeleteSingleEnvironment(environment *types.Environment, name string, branch string) error {
+func DeleteSingleEnvironment(name string, branch string) error {
 	// Invoke Builder Lambda to delete schedules
 	event := types.BuilderEvent{
 		Operation:  "DELETE_SCHEDULE",
