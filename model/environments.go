@@ -159,7 +159,11 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 		ShutdownSchedules: inputEnvironment.ShutdownSchedules,
 		StartupSchedules:  inputEnvironment.StartupSchedules,
 	}
-	body, _ := json.Marshal(event)
+	body, err := json.Marshal(event)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/AddEnvironmentForRepositroy", "operation": "builder/marshalSchedule"}, 0)
+		return types.Environment{}, err
+	}
 
 	client := getLambdaClient()
 	_, err = client.Invoke(&lambda.InvokeInput{
@@ -182,7 +186,11 @@ func AddEnvironmentForRepository(environment types.EnvironmentPost, name string)
 		EnvironmentVariables:  inputEnvironment.EnvironmentVariables,
 		InfrastructureRepoURL: inputEnvironment.InfrastructureRepoURL,
 	}
-	body, _ = json.Marshal(event)
+	body, err = json.Marshal(event)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/AddEnvironmentForRepositroy", "operation": "builder/marshal"}, 0)
+		return types.Environment{}, err
+	}
 
 	_, err = client.Invoke(&lambda.InvokeInput{
 		FunctionName:   aws.String("auto-staging-builder"),
@@ -250,7 +258,11 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 		ShutdownSchedules: environment.ShutdownSchedules,
 		StartupSchedules:  environment.StartupSchedules,
 	}
-	body, _ := json.Marshal(event)
+	body, err := json.Marshal(event)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/UpdateEnvironment", "operation": "builder/marshalSchedule"}, 0)
+		return types.Environment{}, err
+	}
 
 	client := getLambdaClient()
 	_, err = client.Invoke(&lambda.InvokeInput{
@@ -273,7 +285,11 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 		CodeBuildRoleARN:      environment.CodeBuildRoleARN,
 		EnvironmentVariables:  environment.EnvironmentVariables,
 	}
-	body, _ = json.Marshal(event)
+	body, err = json.Marshal(event)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/UpdateEnvironment", "operation": "builder/marshal"}, 0)
+		return types.Environment{}, err
+	}
 
 	_, err = client.Invoke(&lambda.InvokeInput{
 		FunctionName:   aws.String("auto-staging-builder"),
@@ -287,7 +303,11 @@ func UpdateEnvironment(environment *types.EnvironmentPut, name string, branch st
 	}
 
 	response := types.Environment{}
-	dynamodbattribute.UnmarshalMap(result.Attributes, &response)
+	err = dynamodbattribute.UnmarshalMap(result.Attributes, &response)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/UpdateEnvironment", "operation": "builder/unmarshalMap"}, 0)
+		return types.Environment{}, err
+	}
 
 	return response, nil
 }
@@ -301,10 +321,14 @@ func DeleteSingleEnvironment(name string, branch string) error {
 		Branch:     branch,
 		Repository: name,
 	}
-	body, _ := json.Marshal(event)
+	body, err := json.Marshal(event)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/DeleteSingleEnvironment", "operation": "builder/marshalSchedule"}, 0)
+		return err
+	}
 
 	client := getLambdaClient()
-	_, err := client.Invoke(&lambda.InvokeInput{
+	_, err = client.Invoke(&lambda.InvokeInput{
 		FunctionName:   aws.String("auto-staging-builder"),
 		InvocationType: aws.String("Event"),
 		Payload:        body,
@@ -321,7 +345,11 @@ func DeleteSingleEnvironment(name string, branch string) error {
 		Branch:     branch,
 		Repository: name,
 	}
-	body, _ = json.Marshal(event)
+	body, err = json.Marshal(event)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "model/DeleteSingleEnvironment", "operation": "builder/marshal"}, 0)
+		return err
+	}
 
 	_, err = client.Invoke(&lambda.InvokeInput{
 		FunctionName:   aws.String("auto-staging-builder"),

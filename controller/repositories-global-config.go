@@ -17,7 +17,11 @@ func GetGlobalRepositoryConfigController(request events.APIGatewayProxyRequest) 
 		return types.InternalServerErrorResponse, nil
 	}
 
-	body, _ := json.Marshal(obj)
+	body, err := json.Marshal(obj)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/GetGlobalRepositoryConfigController", "operation": "marshal"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
@@ -38,7 +42,11 @@ func PutGlobalRepositoryConfigController(request events.APIGatewayProxyRequest) 
 		return types.InternalServerErrorResponse, nil
 	}
 
-	body, _ := json.Marshal(configuration)
+	body, err := json.Marshal(configuration)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/PutGlobalRepositoryConfigController", "operation": "marshal"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }

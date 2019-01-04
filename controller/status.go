@@ -5,6 +5,7 @@ import (
 	"net/url"
 
 	"github.com/aws/aws-lambda-go/events"
+	"gitlab.com/auto-staging/tower/config"
 	"gitlab.com/auto-staging/tower/model"
 	"gitlab.com/auto-staging/tower/types"
 )
@@ -17,7 +18,11 @@ func GetAllEnvironmentsStatusInformationController(request events.APIGatewayProx
 		return types.InternalServerErrorResponse, nil
 	}
 
-	body, _ := json.Marshal(obj)
+	body, err := json.Marshal(obj)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/GetAllEnvironmentsStatusInformationController", "operation": "marshal"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
@@ -26,8 +31,12 @@ func GetAllEnvironmentsStatusInformationController(request events.APIGatewayProx
 // The "name" path parameter containing the Repository name and the "branch" path parameter containing the branch name gets read from the APIGatewayProxyRequest struct
 func GetSingleEnvironmentStatusInformationController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	obj := types.EnvironmentStatus{}
-	branch, _ := url.PathUnescape(request.PathParameters["branch"])
-	err := model.GetSingleEnvironmentStatusInformation(&obj, request.PathParameters["name"], branch)
+	branch, err := url.PathUnescape(request.PathParameters["branch"])
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/GetSingleEnvironmentStatusInformationController", "operation": "pathUnescape"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
+	err = model.GetSingleEnvironmentStatusInformation(&obj, request.PathParameters["name"], branch)
 	if err != nil {
 		return types.InternalServerErrorResponse, nil
 	}
@@ -36,7 +45,11 @@ func GetSingleEnvironmentStatusInformationController(request events.APIGatewayPr
 		return types.NotFoundErrorResponse, nil
 	}
 
-	body, _ := json.Marshal(obj)
+	body, err := json.Marshal(obj)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/GetSingleEnvironmentStatusInformationController", "operation": "marshal"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }

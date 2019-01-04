@@ -19,7 +19,11 @@ func GetAllRepositoriesController(request events.APIGatewayProxyRequest) (events
 		return types.InternalServerErrorResponse, nil
 	}
 
-	body, _ := json.Marshal(obj)
+	body, err := json.Marshal(obj)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/GetAllRepositoriesController", "operation": "marshal"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
@@ -46,7 +50,11 @@ func AddRepositoryController(request events.APIGatewayProxyRequest) (events.APIG
 		return types.InternalServerErrorResponse, nil
 	}
 
-	body, _ := json.Marshal(repo)
+	body, err := json.Marshal(repo)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/AddRepositoryController", "operation": "marshal"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 201}, nil
 }
@@ -64,7 +72,11 @@ func GetSingleRepositoryController(request events.APIGatewayProxyRequest) (event
 		return types.NotFoundErrorResponse, nil
 	}
 
-	body, _ := json.Marshal(obj)
+	body, err := json.Marshal(obj)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/GetSingleRepositoryController", "operation": "marshal"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
@@ -92,7 +104,12 @@ func PutSingleRepositoryController(request events.APIGatewayProxyRequest) (event
 		return types.InternalServerErrorResponse, nil
 	}
 
-	body, _ := json.Marshal(repository)
+	body, err := json.Marshal(repository)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/PutSingleRepositoryController", "operation": "marshal"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
+
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
 

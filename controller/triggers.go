@@ -21,7 +21,11 @@ func TriggerEnvironemtStatusChangeController(request events.APIGatewayProxyReque
 	}
 
 	status := types.EnvironmentStatus{}
-	branch, _ := url.PathUnescape(trigger.Branch)
+	branch, err := url.PathUnescape(trigger.Branch)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/TriggerEnvironemtStatusChangeController", "operation": "pathUnescape"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
 	err = model.GetSingleEnvironmentStatusInformation(&status, trigger.Repository, branch)
 	if err != nil {
 		return types.InternalServerErrorResponse, nil
