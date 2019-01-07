@@ -9,8 +9,8 @@
     "lambda/messages",
     "lambdacontext"
   ]
-  revision = "9e3676ee8ca83aee500682f382e10b9d03660093"
-  version = "v1.8.0"
+  revision = "928161204cad89472f9e6b5dd49ce16bc91230de"
+  version = "v1.8.1"
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
@@ -52,19 +52,19 @@
     "service/lambda",
     "service/sts"
   ]
-  revision = "130ebb7dc1d6b5a940198b47642fc8b20936a65d"
-  version = "v1.16.1"
+  revision = "fb5f514796fc4fdc6afdcf5a675a5b2baa714b9f"
+  version = "v1.16.14"
 
 [[projects]]
   name = "github.com/janritter/go-lightning-log"
   packages = ["."]
-  revision = "57a046318ccdf94c5e82a6eebf89d87079011493"
-  version = "1.1.0"
+  revision = "cbcc1798020c886531a924ded9b8a250b1737fc0"
+  version = "1.2.0"
 
 [[projects]]
   name = "github.com/jmespath/go-jmespath"
   packages = ["."]
-  revision = "0b12d6b5"
+  revision = "c2b33e84"
 
 [solve-meta]
   analyzer-name = "dep"
