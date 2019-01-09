@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/aws/aws-lambda-go/events"
 	"github.com/auto-staging/tower/config"
 	"github.com/auto-staging/tower/model"
 	"github.com/auto-staging/tower/types"
+	"github.com/aws/aws-lambda-go/events"
 )
 
 // GetAllRepositoriesController is the controller function for the GET /repositories endpoint.

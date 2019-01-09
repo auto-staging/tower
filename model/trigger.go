@@ -3,9 +3,9 @@ package model
 import (
 	"strconv"
 
+	"github.com/auto-staging/tower/config"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/lambda"
-	"github.com/auto-staging/tower/config"
 )
 
 // TriggerSchedulerLambdaForEnvironment invokes the Scheduler Lambda Function with the repository, branch and action given in the parameters, action

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/auto-staging/tower/config"
 	"github.com/auto-staging/tower/controller"
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
 )
 
 // Handler is the main function called by lambda.Start, it redirects the request to the matching controller by resource and http method.

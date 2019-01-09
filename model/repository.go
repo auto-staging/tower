@@ -4,11 +4,11 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/auto-staging/tower/config"
+	"github.com/auto-staging/tower/types"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"github.com/auto-staging/tower/config"
-	"github.com/auto-staging/tower/types"
 )
 
 // GetAllRepositories reads all Repositories from the DynamoDB Table and unmarshals them into the array of Repository structs from the parameters (call by reference).

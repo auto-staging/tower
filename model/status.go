@@ -1,11 +1,11 @@
 package model
 
 import (
+	"github.com/auto-staging/tower/config"
+	"github.com/auto-staging/tower/types"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"github.com/auto-staging/tower/config"
-	"github.com/auto-staging/tower/types"
 )
 
 // GetAllEnvironmentsStatusInformation reads the repository, branch and status columns from all rows of the environments DynamoDB Table and writes
