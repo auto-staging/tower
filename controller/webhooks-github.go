@@ -17,7 +17,7 @@ import (
 )
 
 // GitHubWebhookPingController is the controller function for the POST /webhooks/github endpoint with X-GitHub-Event = ping.
-// GitHub sends the ping event after the Webhook was succesfully added to GitHub.
+// GitHub sends the ping event after the Webhook was successfully added to GitHub.
 // The GitHub Webhook endpoint is secured through HMAC.
 func GitHubWebhookPingController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	return events.APIGatewayProxyResponse{Body: "{\"message\": \"Pong\"}", StatusCode: 200}, nil

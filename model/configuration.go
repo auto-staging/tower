@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/lambda"
 )
 
-// GetConfiguration gets the current LogLevel from the env vars and writes the value to the TowerConfiguration struct from the parameters (call by refernce).
+// GetConfiguration gets the current LogLevel from the env vars and writes the value to the TowerConfiguration struct from the parameters (call by reference).
 // If an error occurs the error gets logged and then returned.
 func GetConfiguration(configuration *types.TowerConfiguration) error {
 	logLevel, err := strconv.Atoi(os.Getenv("CONFIGURATION_LOG_LEVEL"))

@@ -9,7 +9,7 @@ import (
 )
 
 // GetGlobalRepositoryConfiguration reads the current global repository configuration from the DynamoDB Table and unmarshals it to the
-// GeneralConfig struct from the parameters (call by refernce).
+// GeneralConfig struct from the parameters (call by reference).
 // Next to the GeneralConfig struct, the stage parameter which is used as Key in DynamoDB and contains the API stage is required.
 // If an error occurs the error gets logged and then returned.
 func GetGlobalRepositoryConfiguration(configuration *types.GeneralConfig, stage string) error {
