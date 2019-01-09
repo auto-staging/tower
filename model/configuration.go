@@ -7,8 +7,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lambda"
-	"gitlab.com/auto-staging/tower/config"
-	"gitlab.com/auto-staging/tower/types"
+	"github.com/auto-staging/tower/config"
+	"github.com/auto-staging/tower/types"
 )
 
 // GetConfiguration gets the current LogLevel from the env vars and writes the value to the TowerConfiguration struct from the parameters (call by refernce).

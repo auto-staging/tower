@@ -11,8 +11,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"gitlab.com/auto-staging/tower/config"
-	"gitlab.com/auto-staging/tower/types"
+	"github.com/auto-staging/tower/config"
+	"github.com/auto-staging/tower/types"
 )
 
 // GetAllEnvironmentsForRepository gets all Environments where the repository matches name (parameter) from DynamoDB, the received Environments are unmarshaled into

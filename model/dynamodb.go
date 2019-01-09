@@ -4,7 +4,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"gitlab.com/auto-staging/tower/config"
+	"github.com/auto-staging/tower/config"
 )
 
 func getDynamoDbClient() *dynamodb.DynamoDB {

@@ -11,9 +11,9 @@ import (
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
-	"gitlab.com/auto-staging/tower/config"
-	"gitlab.com/auto-staging/tower/model"
-	"gitlab.com/auto-staging/tower/types"
+	"github.com/auto-staging/tower/config"
+	"github.com/auto-staging/tower/model"
+	"github.com/auto-staging/tower/types"
 )
 
 // GitHubWebhookPingController is the controller function for the POST /webhooks/github endpoint with X-GitHub-Event = ping.
