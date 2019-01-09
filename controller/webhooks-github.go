@@ -38,7 +38,10 @@ func GitHubWebhookCreateController(request events.APIGatewayProxyRequest) (event
 	}
 
 	repository := types.Repository{}
-	model.GetSingleRepository(&repository, webhook.Repository.Name)
+	err = model.GetSingleRepository(&repository, webhook.Repository.Name)
+	if err != nil {
+		return types.InternalServerErrorResponse, nil
+	}
 
 	if repository.Repository == "" {
 		return types.NotFoundErrorResponse, nil
@@ -46,7 +49,11 @@ func GitHubWebhookCreateController(request events.APIGatewayProxyRequest) (event
 
 	hit := false
 	for _, filter := range repository.Filters {
-		match, _ := regexp.MatchString(filter, webhook.Ref)
+		match, err := regexp.MatchString(filter, webhook.Ref)
+		if err != nil {
+			config.Logger.Log(err, map[string]string{"module": "controller/GitHubWebhookCreateController", "operation": "regexpMatchstring"}, 0)
+			return types.InternalServerErrorResponse, nil
+		}
 		if match {
 			hit = true
 			break
@@ -65,7 +72,11 @@ func GitHubWebhookCreateController(request events.APIGatewayProxyRequest) (event
 		return types.InternalServerErrorResponse, nil
 	}
 
-	body, _ := json.Marshal(result)
+	body, err := json.Marshal(result)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/GitHubWebhookCreateController", "operation": "marshal"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 201}, nil
 }
@@ -94,8 +105,7 @@ func GitHubWebhookDeleteController(request events.APIGatewayProxyRequest) (event
 		return types.InvalidEnvironmentStatusResponse, nil
 	}
 
-	environment := types.Environment{}
-	err = model.DeleteSingleEnvironment(&environment, webhook.Repository.Name, webhook.Ref)
+	err = model.DeleteSingleEnvironment(webhook.Repository.Name, webhook.Ref)
 	if err != nil {
 		return types.InternalServerErrorResponse, nil
 	}
@@ -105,10 +115,18 @@ func GitHubWebhookDeleteController(request events.APIGatewayProxyRequest) (event
 
 func verifyHMAC(body string, githubHash string) bool {
 	messageMAC := githubHash[5:] // first 5 chars are sha1=
-	messageMACBuf, _ := hex.DecodeString(messageMAC)
+	messageMACBuf, err := hex.DecodeString(messageMAC)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/verifyHMAC", "operation": "deocdeString"}, 0)
+		return false
+	}
 
 	mac := hmac.New(sha1.New, []byte(os.Getenv("WEBHOOK_SECRET_TOKEN")))
-	mac.Write([]byte(body))
+	_, err = mac.Write([]byte(body))
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/verifyHMAC", "operation": "deocdeString"}, 0)
+		return false
+	}
 	expectedMAC := mac.Sum(nil)
 
 	return hmac.Equal(messageMACBuf, expectedMAC)

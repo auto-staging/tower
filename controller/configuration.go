@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/aws/aws-lambda-go/events"
+	"gitlab.com/auto-staging/tower/config"
 	"gitlab.com/auto-staging/tower/model"
 	"gitlab.com/auto-staging/tower/types"
 )
@@ -16,7 +17,11 @@ func GetConfigurationController(request events.APIGatewayProxyRequest) (events.A
 		return types.InternalServerErrorResponse, nil
 	}
 
-	body, _ := json.Marshal(obj)
+	body, err := json.Marshal(obj)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/GetConfigurationController", "operation": "marshal"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
@@ -24,18 +29,22 @@ func GetConfigurationController(request events.APIGatewayProxyRequest) (events.A
 // PutConfigurationController is the controller function for the PUT /configuration endpoint.
 // The request body with the update information gets read from the APIGatewayProxyRequest struct.
 func PutConfigurationController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	config := types.TowerConfiguration{}
-	err := json.Unmarshal([]byte(request.Body), &config)
+	configuration := types.TowerConfiguration{}
+	err := json.Unmarshal([]byte(request.Body), &configuration)
 	if err != nil {
 		return types.InvalidRequestBodyResponse, nil
 	}
 
-	err = model.UpdateConfiguration(&config)
+	err = model.UpdateConfiguration(&configuration)
 	if err != nil {
 		return types.InternalServerErrorResponse, nil
 	}
 
-	body, _ := json.Marshal(config)
+	body, err := json.Marshal(configuration)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/PutConfigurationController", "operation": "marshal"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }

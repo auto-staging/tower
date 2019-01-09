@@ -15,13 +15,17 @@ import (
 // GetAllEnvironmentsForRepositoryController is the controller function for the GET /repositories/{name}/environments endpoint.
 // The "name" path parameter containing the Repository name gets read from the APIGatewayProxyRequest struct
 func GetAllEnvironmentsForRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	obj := []types.Environment{}
+	var obj []types.Environment
 	err := model.GetAllEnvironmentsForRepository(&obj, request.PathParameters["name"])
 	if err != nil {
 		return types.InternalServerErrorResponse, nil
 	}
 
-	body, _ := json.Marshal(obj)
+	body, err := json.Marshal(obj)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/GetAllEnvironmentsForRepositoryController", "operation": "marshal"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
@@ -53,7 +57,11 @@ func AddEnvironmentForRepositoryController(request events.APIGatewayProxyRequest
 		return types.InternalServerErrorResponse, nil
 	}
 
-	body, _ := json.Marshal(result)
+	body, err := json.Marshal(result)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/AddEnvironmentForRepositoryController", "operation": "marshal"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 201}, nil
 }
@@ -62,8 +70,12 @@ func AddEnvironmentForRepositoryController(request events.APIGatewayProxyRequest
 // The "name" path parameter containing the Repository name and the "branch" path parameter containing the branch name gets read from the APIGatewayProxyRequest struct
 func GetSingleEnvironmentForRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	obj := types.Environment{}
-	branch, _ := url.PathUnescape(request.PathParameters["branch"])
-	err := model.GetSingleEnvironmentForRepository(&obj, request.PathParameters["name"], branch)
+	branch, err := url.PathUnescape(request.PathParameters["branch"])
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/GetSingleEnvironmentForRepositoryController", "operation": "pathUnescape"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
+	err = model.GetSingleEnvironmentForRepository(&obj, request.PathParameters["name"], branch)
 	if err != nil {
 		return types.InternalServerErrorResponse, nil
 	}
@@ -72,7 +84,11 @@ func GetSingleEnvironmentForRepositoryController(request events.APIGatewayProxyR
 		return types.NotFoundErrorResponse, nil
 	}
 
-	body, _ := json.Marshal(obj)
+	body, err := json.Marshal(obj)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/GetSingleEnvironmentForRepositoryController", "operation": "marshal"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
 
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
@@ -82,8 +98,12 @@ func GetSingleEnvironmentForRepositoryController(request events.APIGatewayProxyR
 // and the request body containing the updated information for the Environment gets read from the APIGatewayProxyRequest struct
 func PutSinglEnvironmentForRepositoryController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	status := types.EnvironmentStatus{}
-	branch, _ := url.PathUnescape(request.PathParameters["branch"])
-	err := model.GetSingleEnvironmentStatusInformation(&status, request.PathParameters["name"], branch)
+	branch, err := url.PathUnescape(request.PathParameters["branch"])
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/PutSinglEnvironmentForRepositoryController", "operation": "pathUnescape"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
+	err = model.GetSingleEnvironmentStatusInformation(&status, request.PathParameters["name"], branch)
 	if err != nil {
 		return types.InternalServerErrorResponse, nil
 	}
@@ -113,7 +133,12 @@ func PutSinglEnvironmentForRepositoryController(request events.APIGatewayProxyRe
 		return types.InternalServerErrorResponse, nil
 	}
 
-	body, _ := json.Marshal(result)
+	body, err := json.Marshal(result)
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/PutSinglEnvironmentForRepositoryController", "operation": "marshal"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
+
 	return events.APIGatewayProxyResponse{Body: string(body), StatusCode: 200}, nil
 }
 
@@ -121,8 +146,12 @@ func PutSinglEnvironmentForRepositoryController(request events.APIGatewayProxyRe
 // The "name" path parameter containing the Repository name and the "branch" path parameter containing the branch name gets read from the APIGatewayProxyRequest struct
 func DeleteSingleEnvironmentController(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	status := types.EnvironmentStatus{}
-	branch, _ := url.PathUnescape(request.PathParameters["branch"])
-	err := model.GetSingleEnvironmentStatusInformation(&status, request.PathParameters["name"], branch)
+	branch, err := url.PathUnescape(request.PathParameters["branch"])
+	if err != nil {
+		config.Logger.Log(err, map[string]string{"module": "controller/DeleteSingleEnvironmentController", "operation": "pathUnescape"}, 0)
+		return types.InternalServerErrorResponse, nil
+	}
+	err = model.GetSingleEnvironmentStatusInformation(&status, request.PathParameters["name"], branch)
 	if err != nil {
 		return types.InternalServerErrorResponse, nil
 	}
@@ -136,8 +165,7 @@ func DeleteSingleEnvironmentController(request events.APIGatewayProxyRequest) (e
 		return types.InvalidEnvironmentStatusResponse, nil
 	}
 
-	env := types.Environment{}
-	err = model.DeleteSingleEnvironment(&env, request.PathParameters["name"], branch)
+	err = model.DeleteSingleEnvironment(request.PathParameters["name"], branch)
 	if err != nil {
 		return types.InternalServerErrorResponse, nil
 	}
