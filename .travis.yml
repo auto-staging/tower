@@ -1,0 +1,28 @@
+stages:
+  - test
+
+  - name: release
+    if: branch = master AND type != pull_request
+
+jobs:
+  include:
+    - stage: test
+      language: go
+      go: 'stable'
+      before_script:
+        # Setup dependency management tool (go dep)
+        - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+        - chmod +x $GOPATH/bin/dep
+      script:
+        - make prepare
+        - make tests
+    
+    - stage: release
+      language: node_js
+      install:
+        - . $HOME/.nvm/nvm.sh
+        - nvm install stable
+        - nvm use stable
+        - npm install @semantic-release/changelog && npm install @semantic-release/git
+      script:
+        - npx semantic-release
