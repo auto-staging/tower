@@ -140,6 +140,12 @@ var InvalidRequestBodyResponse = events.APIGatewayProxyResponse{
 	StatusCode: 400,
 }
 
+// InvalidWebhookIsDeactivatedResponse contains a APIGatewayProxyResponse struct preset with "Webhooks are deactivated for this repository" it's used as return value in controllers.
+var InvalidWebhookIsDeactivatedResponse = events.APIGatewayProxyResponse{
+	Body:       "{\"message\": \"Webhooks are deactivated for this repository\"}",
+	StatusCode: 400,
+}
+
 // InvalidEnvironmentStatusResponse contains a APIGatewayProxyResponse struct preset with "Can't execute operation in current environment status" it's used as return value in controllers.
 var InvalidEnvironmentStatusResponse = events.APIGatewayProxyResponse{
 	Body:       "{\"message\": \"Can't execute operation in current environment status\"}",

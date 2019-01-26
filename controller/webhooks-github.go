@@ -47,6 +47,10 @@ func GitHubWebhookCreateController(request events.APIGatewayProxyRequest) (event
 		return types.NotFoundErrorResponse, nil
 	}
 
+	if !repository.Webhook {
+		return types.InvalidWebhookIsDeactivatedResponse, nil
+	}
+
 	hit := false
 	for _, filter := range repository.Filters {
 		match, err := regexp.MatchString(filter, webhook.Ref)
@@ -93,6 +97,15 @@ func GitHubWebhookDeleteController(request events.APIGatewayProxyRequest) (event
 	err := json.Unmarshal([]byte(request.Body), &webhook)
 	if err != nil || webhook.RefType != "branch" {
 		return types.InvalidRequestBodyResponse, nil
+	}
+
+	repository := types.Repository{}
+	err = model.GetSingleRepository(&repository, webhook.Repository.Name)
+	if err != nil {
+		return types.InternalServerErrorResponse, nil
+	}
+	if !repository.Webhook {
+		return types.InvalidWebhookIsDeactivatedResponse, nil
 	}
 
 	status := types.EnvironmentStatus{}
