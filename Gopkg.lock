@@ -2,17 +2,20 @@
 
 
 [[projects]]
+  digest = "1:3c1b2a3b4f61355c883f878b5754bc27c0d159151cf84fbe21913756d74f539c"
   name = "github.com/aws/aws-lambda-go"
   packages = [
     "events",
     "lambda",
     "lambda/messages",
-    "lambdacontext"
+    "lambdacontext",
   ]
+  pruneopts = "UT"
   revision = "928161204cad89472f9e6b5dd49ce16bc91230de"
   version = "v1.8.1"
 
 [[projects]]
+  digest = "1:c012612dc3512d12cb067fa93710d38130ea9eb3d2f99207616d37599f4d9384"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -50,25 +53,39 @@
     "service/dynamodb",
     "service/dynamodb/dynamodbattribute",
     "service/lambda",
-    "service/sts"
+    "service/sts",
   ]
-  revision = "fb5f514796fc4fdc6afdcf5a675a5b2baa714b9f"
-  version = "v1.16.14"
+  pruneopts = "UT"
+  revision = "81f3829f5a9d041041bdf56e55926691309d7699"
+  version = "v1.16.26"
 
 [[projects]]
+  digest = "1:a0eed48e4f02b216aeed9b8d8af57468eb0f6b96cc290932fc0df03e4b8241d2"
   name = "github.com/janritter/go-lightning-log"
   packages = ["."]
+  pruneopts = "UT"
   revision = "cbcc1798020c886531a924ded9b8a250b1737fc0"
   version = "1.2.0"
 
 [[projects]]
+  digest = "1:bb81097a5b62634f3e9fec1014657855610c82d19b9a40c17612e32651e35dca"
   name = "github.com/jmespath/go-jmespath"
   packages = ["."]
+  pruneopts = "UT"
   revision = "c2b33e84"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a6658330dcbf2c4eedd456b7d62b8db136b98a594031cbba6f44f6c8640ec190"
+  input-imports = [
+    "github.com/aws/aws-lambda-go/events",
+    "github.com/aws/aws-lambda-go/lambda",
+    "github.com/aws/aws-sdk-go/aws",
+    "github.com/aws/aws-sdk-go/aws/session",
+    "github.com/aws/aws-sdk-go/service/dynamodb",
+    "github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute",
+    "github.com/aws/aws-sdk-go/service/lambda",
+    "github.com/janritter/go-lightning-log",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
