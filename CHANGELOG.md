@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/auto-staging/tower/compare/1.0.0...1.0.1) (2019-01-26)
+
+
+### Bug Fixes
+
+* fixed [#2](https://github.com/auto-staging/tower/issues/2) missing check for webhook parameter in github webhook endpoints ([aafd90c](https://github.com/auto-staging/tower/commit/aafd90c))
+
 # 1.0.0 (2019-01-10)
 
 
