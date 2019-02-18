@@ -16,11 +16,13 @@ import (
 func GetConfiguration(configuration *types.TowerConfiguration) error {
 	logLevel, err := strconv.Atoi(os.Getenv("CONFIGURATION_LOG_LEVEL"))
 	if err != nil {
-		config.Logger.Log(err, map[string]string{"module": "model/GetConfiguration"}, 1)
+		config.Logger.Log(err, map[string]string{"module": "model/GetConfiguration", "operation": "getLogLevel"}, 1)
 		return err
 	}
-
 	configuration.LogLevel = logLevel
+
+	webhookSecretToken := os.Getenv("WEBHOOK_SECRET_TOKEN")
+	configuration.WebhookSecretToken = webhookSecretToken
 
 	return nil
 }
@@ -44,7 +46,10 @@ func UpdateConfiguration(configuration *types.TowerConfiguration) error {
 	result, err := svc.UpdateFunctionConfiguration(&lambda.UpdateFunctionConfigurationInput{
 		FunctionName: aws.String("auto-staging-tower"),
 		Environment: &lambda.Environment{
-			Variables: map[string]*string{"CONFIGURATION_LOG_LEVEL": aws.String(strconv.Itoa(configuration.LogLevel))},
+			Variables: map[string]*string{
+				"CONFIGURATION_LOG_LEVEL": aws.String(strconv.Itoa(configuration.LogLevel)),
+				"WEBHOOK_SECRET_TOKEN":    aws.String(configuration.WebhookSecretToken),
+			},
 		},
 	})
 
@@ -59,6 +64,9 @@ func UpdateConfiguration(configuration *types.TowerConfiguration) error {
 		return err
 	}
 	configuration.LogLevel = logLevel
+
+	webhookSecretToken := os.Getenv("WEBHOOK_SECRET_TOKEN")
+	configuration.WebhookSecretToken = webhookSecretToken
 
 	return nil
 }

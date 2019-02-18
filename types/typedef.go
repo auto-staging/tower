@@ -6,7 +6,8 @@ import (
 
 // TowerConfiguration is the implementation of the TowerAPI TowerConfiguration schema
 type TowerConfiguration struct {
-	LogLevel int `json:"logLevel"`
+	LogLevel           int    `json:"logLevel"`
+	WebhookSecretToken string `json:"webhookSecretToken"`
 }
 
 // EnvironmentVariable is the implementation of the TowerAPI EnvironmentVariable schema
