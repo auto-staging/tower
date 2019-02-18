@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/auto-staging/tower/compare/1.0.1...1.1.0) (2019-02-18)
+
+
+### Features
+
+* added webhok secret token to tower configuration endpoint - fixes [#5](https://github.com/auto-staging/tower/issues/5) ([1b939f3](https://github.com/auto-staging/tower/commit/1b939f3))
+
 ## [1.0.1](https://github.com/auto-staging/tower/compare/1.0.0...1.0.1) (2019-01-26)
 
 
