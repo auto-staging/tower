@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/auto-staging/tower/compare/1.1.0...1.2.0) (2019-02-22)
+
+
+### Features
+
+* made region dynamic based on the lambda region ([52b3d59](https://github.com/auto-staging/tower/commit/52b3d59))
+
 # [1.1.0](https://github.com/auto-staging/tower/compare/1.0.1...1.1.0) (2019-02-18)
 
 
