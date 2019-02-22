@@ -1,6 +1,8 @@
 package model
 
 import (
+	"os"
+
 	"github.com/auto-staging/tower/config"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -9,7 +11,7 @@ import (
 
 func getDynamoDbClient() *dynamodb.DynamoDB {
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String("eu-central-1")},
+		Region: aws.String(os.Getenv("AWS_REGION"))},
 	)
 
 	if err != nil {
