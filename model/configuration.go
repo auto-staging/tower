@@ -33,7 +33,7 @@ func GetConfiguration(configuration *types.TowerConfiguration) error {
 // If an error occurs the error gets logged and then returned.
 func UpdateConfiguration(configuration *types.TowerConfiguration) error {
 	sess, errSession := session.NewSession(&aws.Config{
-		Region: aws.String("eu-central-1")},
+		Region: aws.String(os.Getenv("AWS_REGION"))},
 	)
 
 	if errSession != nil {
