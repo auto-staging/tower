@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/auto-staging/tower/config"
 	"github.com/auto-staging/tower/controller"
 	"github.com/aws/aws-lambda-go/events"
@@ -12,83 +14,83 @@ import (
 // to get information about the request (containing ressource, method and much more) and APIGatewayProxyResponse as return value (including http code and response message)
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	if request.Resource == "/configuration" && request.HTTPMethod == "GET" {
+	if request.Resource == "/configuration" && request.HTTPMethod == http.MethodGet {
 		return controller.GetConfigurationController(request)
 	}
 
-	if request.Resource == "/configuration" && request.HTTPMethod == "PUT" {
+	if request.Resource == "/configuration" && request.HTTPMethod == http.MethodPut {
 		return controller.PutConfigurationController(request)
 	}
 
-	if request.Resource == "/repositories" && request.HTTPMethod == "GET" {
+	if request.Resource == "/repositories" && request.HTTPMethod == http.MethodGet {
 		return controller.GetAllRepositoriesController(request)
 	}
 
-	if request.Resource == "/repositories" && request.HTTPMethod == "POST" {
+	if request.Resource == "/repositories" && request.HTTPMethod == http.MethodPost {
 		return controller.AddRepositoryController(request)
 	}
 
-	if request.Resource == "/repositories/{name}" && request.HTTPMethod == "GET" {
+	if request.Resource == "/repositories/{name}" && request.HTTPMethod == http.MethodGet {
 		return controller.GetSingleRepositoryController(request)
 	}
 
-	if request.Resource == "/repositories/{name}" && request.HTTPMethod == "PUT" {
+	if request.Resource == "/repositories/{name}" && request.HTTPMethod == http.MethodPut {
 		return controller.PutSingleRepositoryController(request)
 	}
 
-	if request.Resource == "/repositories/{name}" && request.HTTPMethod == "DELETE" {
+	if request.Resource == "/repositories/{name}" && request.HTTPMethod == http.MethodDelete {
 		return controller.DeleteSingleRepositoryController(request)
 	}
 
-	if request.Resource == "/repositories/{name}/environments" && request.HTTPMethod == "GET" {
+	if request.Resource == "/repositories/{name}/environments" && request.HTTPMethod == http.MethodGet {
 		return controller.GetAllEnvironmentsForRepositoryController(request)
 	}
 
-	if request.Resource == "/repositories/{name}/environments" && request.HTTPMethod == "POST" {
+	if request.Resource == "/repositories/{name}/environments" && request.HTTPMethod == http.MethodPost {
 		return controller.AddEnvironmentForRepositoryController(request)
 	}
 
-	if request.Resource == "/repositories/{name}/environments/{branch}" && request.HTTPMethod == "GET" {
+	if request.Resource == "/repositories/{name}/environments/{branch}" && request.HTTPMethod == http.MethodGet {
 		return controller.GetSingleEnvironmentForRepositoryController(request)
 	}
 
-	if request.Resource == "/repositories/{name}/environments/{branch}" && request.HTTPMethod == "PUT" {
+	if request.Resource == "/repositories/{name}/environments/{branch}" && request.HTTPMethod == http.MethodPut {
 		return controller.PutSinglEnvironmentForRepositoryController(request)
 	}
 
-	if request.Resource == "/repositories/{name}/environments/{branch}" && request.HTTPMethod == "DELETE" {
+	if request.Resource == "/repositories/{name}/environments/{branch}" && request.HTTPMethod == http.MethodDelete {
 		return controller.DeleteSingleEnvironmentController(request)
 	}
 
-	if request.Resource == "/repositories/environments/status" && request.HTTPMethod == "GET" {
+	if request.Resource == "/repositories/environments/status" && request.HTTPMethod == http.MethodGet {
 		return controller.GetAllEnvironmentsStatusInformationController(request)
 	}
 
-	if request.Resource == "/repositories/{name}/environments/{branch}/status" && request.HTTPMethod == "GET" {
+	if request.Resource == "/repositories/{name}/environments/{branch}/status" && request.HTTPMethod == http.MethodGet {
 		return controller.GetSingleEnvironmentStatusInformationController(request)
 	}
 
-	if request.Resource == "/repositories/environments" && request.HTTPMethod == "GET" {
+	if request.Resource == "/repositories/environments" && request.HTTPMethod == http.MethodGet {
 		return controller.GetGlobalRepositoryConfigController(request)
 	}
 
-	if request.Resource == "/repositories/environments" && request.HTTPMethod == "PUT" {
+	if request.Resource == "/repositories/environments" && request.HTTPMethod == http.MethodPut {
 		return controller.PutGlobalRepositoryConfigController(request)
 	}
 
-	if request.Resource == "/webhooks/github" && request.HTTPMethod == "POST" && request.Headers["X-GitHub-Event"] == "ping" {
+	if request.Resource == "/webhooks/github" && request.HTTPMethod == http.MethodPost && request.Headers["X-GitHub-Event"] == "ping" {
 		return controller.GitHubWebhookPingController(request)
 	}
 
-	if request.Resource == "/webhooks/github" && request.HTTPMethod == "POST" && request.Headers["X-GitHub-Event"] == "create" {
+	if request.Resource == "/webhooks/github" && request.HTTPMethod == http.MethodPost && request.Headers["X-GitHub-Event"] == "create" {
 		return controller.GitHubWebhookCreateController(request)
 	}
 
-	if request.Resource == "/webhooks/github" && request.HTTPMethod == "POST" && request.Headers["X-GitHub-Event"] == "delete" {
+	if request.Resource == "/webhooks/github" && request.HTTPMethod == http.MethodPost && request.Headers["X-GitHub-Event"] == "delete" {
 		return controller.GitHubWebhookDeleteController(request)
 	}
 
-	if request.Resource == "/triggers/schedule" && request.HTTPMethod == "POST" {
+	if request.Resource == "/triggers/schedule" && request.HTTPMethod == http.MethodPost {
 		return controller.TriggerEnvironemtStatusChangeController(request)
 	}
 
