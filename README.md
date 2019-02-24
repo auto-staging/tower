@@ -11,6 +11,11 @@
 
 [OpenAPI Specification](https://app.swaggerhub.com/apis-docs/auto-staging/auto-staging-tower/1.0.0)
 
+## Requirements
+
+- Golang
+- Go dep
+
 ## Usage
 
 ### Install dependencies
