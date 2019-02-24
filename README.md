@@ -11,6 +11,23 @@
 
 [OpenAPI Specification](https://app.swaggerhub.com/apis-docs/auto-staging/auto-staging-tower/1.0.0)
 
+## Usage
+
+### Install dependencies
+
+Go dep must be installed
+
+```bash
+make prepare
+```
+
+### Build binary
+
+```bash
+make build
+```
+
+compiles to bin/auto-staging-tower
 
 ## License and Author
 
