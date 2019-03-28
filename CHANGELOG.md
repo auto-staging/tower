@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/auto-staging/tower/compare/1.2.0...1.2.1) (2019-03-28)
+
+
+### Bug Fixes
+
+* compile binary for linux ([68296dc](https://github.com/auto-staging/tower/commit/68296dc))
+
 # [1.2.0](https://github.com/auto-staging/tower/compare/1.1.0...1.2.0) (2019-02-22)
 
 
