@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/auto-staging/tower/types"
 	"github.com/janritter/go-lightning-log"
 )
 
@@ -30,4 +31,12 @@ func Init() {
 		log.Println("ERROR - Init() - Init Logger")
 		log.Println(err)
 	}
+}
+
+func GetVersionInformation(componentVersion *types.SingleComponentVersion) {
+	componentVersion.Name = "tower"
+	componentVersion.Version = version
+	componentVersion.CommitHash = commitHash
+	componentVersion.Branch = branch
+	componentVersion.BuildTime = buildTime
 }
