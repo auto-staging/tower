@@ -94,6 +94,10 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return controller.TriggerEnvironemtStatusChangeController(request)
 	}
 
+	if request.Resource == "/versions" && request.HTTPMethod == http.MethodGet {
+		return controller.GetVersionsController(request)
+	}
+
 	return events.APIGatewayProxyResponse{Body: "{ \"message\" : \"No controller for requested resource and method found\" }", StatusCode: 400}, nil
 }
 
