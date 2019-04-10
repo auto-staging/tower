@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/auto-staging/tower/compare/1.3.0...1.3.1) (2019-04-10)
+
+
+### Bug Fixes
+
+* trim spaces from the branch name input to prevent terraform problems - fixes [#10](https://github.com/auto-staging/tower/issues/10) ([05e8258](https://github.com/auto-staging/tower/commit/05e8258))
+
 # [1.3.0](https://github.com/auto-staging/tower/compare/1.2.1...1.3.0) (2019-04-10)
 
 
