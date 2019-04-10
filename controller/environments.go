@@ -48,6 +48,7 @@ func AddEnvironmentForRepositoryController(request events.APIGatewayProxyRequest
 		return events.APIGatewayProxyResponse{Body: "{\"message\": \"Repository not found\"}", StatusCode: 404}, nil
 	}
 
+	env.Branch = strings.TrimSpace(env.Branch)
 	result, err := model.AddEnvironmentForRepository(env, request.PathParameters["name"])
 
 	if err != nil {
