@@ -1,3 +1,11 @@
+# [1.3.0](https://github.com/auto-staging/tower/compare/1.2.1...1.3.0) (2019-04-10)
+
+
+### Features
+
+* added go structs for component version informations ([3ab2595](https://github.com/auto-staging/tower/commit/3ab2595))
+* added versions endpoint to get version information about all Auto Staging components ([2cee155](https://github.com/auto-staging/tower/commit/2cee155))
+
 ## [1.2.1](https://github.com/auto-staging/tower/compare/1.2.0...1.2.1) (2019-03-28)
 
 
