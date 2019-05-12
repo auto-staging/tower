@@ -7,7 +7,9 @@
 
 > Tower is the central management Lambda function for auto-staging, it is called through the AWS API Gateway.
 
-## [Documentation](docs/README.md)
+## [Documentation](https://auto-staging.github.io/tower)
+
+The documentation is available on GitHub pages if you want to access the same information offline, you can find it in the /docs folder or by following this link [Offline documentation (Markdown)](docs/README.md)
 
 ## License and Author
 
