@@ -7,7 +7,32 @@
 
 > Tower is the central management Lambda function for auto-staging, it is called through the AWS API Gateway.
 
-## [Documentation](docs/README.md)
+## Tower API Documentation
+
+[OpenAPI Specification](https://app.swaggerhub.com/apis-docs/auto-staging/auto-staging-tower/1.0.0)
+
+## Requirements
+
+- Golang
+- Go dep
+
+## Usage
+
+### Install dependencies
+
+Go dep must be installed
+
+```bash
+make prepare
+```
+
+### Build binary
+
+```bash
+make build
+```
+
+compiles to bin/auto-staging-tower
 
 ## License and Author
 
