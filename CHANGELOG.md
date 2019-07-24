@@ -1,3 +1,11 @@
+## [1.3.2](https://github.com/auto-staging/tower/compare/1.3.1...1.3.2) (2019-07-24)
+
+
+### Bug Fixes
+
+* fixed compilation for AWS lambda ([66f51ac](https://github.com/auto-staging/tower/commit/66f51ac))
+* replaced logger module with correct function name ([ff967de](https://github.com/auto-staging/tower/commit/ff967de))
+
 ## [1.3.1](https://github.com/auto-staging/tower/compare/1.3.0...1.3.1) (2019-04-10)
 
 
