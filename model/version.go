@@ -47,7 +47,7 @@ func getVersionInformationFromAutoStagingLambda(componentVersion *types.SingleCo
 
 	err = json.Unmarshal([]byte(unquoted), componentVersion)
 	if err != nil {
-		config.Logger.Log(err, map[string]string{"module": "model/GetBuilderVersion", "operation": "unmarshal"}, 0)
+		config.Logger.Log(err, map[string]string{"module": "model/getVersionInformationFromAutoStagingLambda", "operation": "unmarshal"}, 0)
 		return err
 	}
 
